@@ -13,14 +13,19 @@ dt_rank_cmb <- dt_rank_cmb %>%
 # Calculate the change in scores by major over time
 score_by_major_change <- dt_rank_cmb %>%
   group_by(院校, major) %>%
+  filter(year %in% c(2020, 2023)) %>%
   arrange(year) %>%
   summarise(
+    # Calculate the change in scores by major over time
+    countn = n(),
     score_by_major_early = first(score_by_major_scale),
     # Get the first score for each major
     score_by_major_later = last(score_by_major_scale),
     # Get the last score for each major
-    score_by_major_change = score_by_major_later - score_by_major_early  # Calculate the change in scores
+    score_by_major_change = score_by_major_later - score_by_major_early,  # Calculate the change in scores
+    .groups = "keep"
   ) %>%
+  filter(countn > 1) %>%
   ungroup() %>%
   arrange(desc(score_by_major_change))  # Arrange the data by the change in scores in descending order
 # slice(1:100)
@@ -67,7 +72,7 @@ generate_plot <- function(time, filename) {
     # Assuming df is your data frame and 'your_column' is the column you want to modify
     # mutate(major = paste0(substr(major, 1, 4), "\n", substr(major, 5, nchar(major)))) %>%
     group_by(score_group, major) %>%
-    summarise(avg_scores = mean(score_by_major_scale, na.rm = TRUE)) %>%
+    summarise(avg_scores = mean(score_by_major_scale, na.rm = TRUE),.groups = "keep") %>%
     group_by(score_group) %>%
     ggcharts::bar_chart(major, log(avg_scores), fill = score_group, facet = score_group, top_n = 30) +
     theme_bw() +
@@ -102,6 +107,8 @@ generate_plot(2023, "plot/major_by_score_2023.png")
 
 
 ### 热门专业变化趋势分析
+## 哪些专业变多？哪些专业消失？
+
 ## 从低分段 跃迁至高分段的 学校和专业
 
 ## 2020-2023年
@@ -144,13 +151,13 @@ generate_plot(2023, "plot/major_by_score_2023.png")
 # )
 
 
-
+## 2020-2023专业热度变化分布
 # Plot the distribution of the change in scores by major
 # Calculate the average scores by major
 avg_scores <- score_by_major_rough_change %>%
   filter(major_rough %in% majorData_rough$major) %>%
   group_by(major_rough) %>%
-  summarise(avg_score = mean(score_by_major_change))
+  summarise(avg_score = mean(score_by_major_change), .groups = "keep")
 
 # Add the average scores to the graph
 score_by_major_rough_change %>%
@@ -284,39 +291,6 @@ ggsave(
 )
 
 
-# plotly
-# https://rdrr.io/cran/plotly/man/ggplotly.html
-## Not run:
-# simple example
-ggpenguins <- qplot(bill_length_mm, body_mass_g,
-  data = palmerpenguins::penguins, color = species
-)
-ggplotly(ggpenguins)
 
-data(canada.cities, package = "maps")
-viz <- ggplot(canada.cities, aes(long, lat)) +
-  borders(regions = "canada") +
-  coord_equal() +
-  geom_point(aes(text = name, size = pop), colour = "red", alpha = 1 / 2)
-ggplotly(viz, tooltip = c("text", "size"))
-
-# linked scatterplot brushing
-d <- highlight_key(mtcars)
-qplot(data = d, x = mpg, y = wt) %>%
-  subplot(qplot(data = d, x = mpg, y = vs)) %>%
-  layout(title = "Click and drag to select points") %>%
-  highlight("plotly_selected")
-
-
-# more brushing (i.e. highlighting) examples
-demo("crosstalk-highlight-ggplotly", package = "plotly")
-
-# client-side linked brushing in a scatterplot matrix
-highlight_key(palmerpenguins::penguins) %>%
-  GGally::ggpairs(aes(colour = Species), columns = 1:4) %>%
-  ggplotly(tooltip = c("x", "y", "colour")) %>%
-  highlight("plotly_selected")
-
-## End(Not run)
 
 

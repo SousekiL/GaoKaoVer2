@@ -118,7 +118,8 @@ read_and_process_data <- function(year) {
   dt_school <- dt %>%
     dplyr::filter(!is.infinite(位次), !is.na(位次)) %>%
     dplyr::group_by(`院校`) %>%
-    dplyr::summarise(rank_by_school = median(`位次`, na.rm = TRUE)) %>%
+    dplyr::summarise(rank_by_school = median(`位次`, na.rm = TRUE),
+                     .groups = "keep") %>%
     ungroup()
   
   return(list(dt = dt, dt_school = dt_school))
@@ -139,7 +140,7 @@ process_data <- function(data) {
   data %>%
     mutate(`专业` = str_sub(`专业`, start = 3)) %>%
     group_by(`院校`, `专业`) %>%
-    summarise(`计划数` = sum(`计划数`), `位次` = max(`位次`, na.rm = TRUE)) %>%
+    summarise(`计划数` = sum(`计划数`), `位次` = max(`位次`, na.rm = TRUE), .groups = "keep") %>%
     ungroup()
 }
 
@@ -162,7 +163,8 @@ update_major <- function(df, majorData) {
   df %<>%
     group_by(院校, major) %>%
     summarise(计划数 = sum(计划数),
-              rank_by_major = max(位次, na.rm = TRUE)) %>%
+              rank_by_major = max(位次, na.rm = TRUE),
+              .groups = "keep") %>%
     ungroup()
   
   return(df)
