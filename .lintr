@@ -1,0 +1,8 @@
+linters: with_defaults(
+  camel_case_linter = NULL,
+  THE_LINTER_YOU_DON'T_WANT = Null
+  )
+exclude: "# Exclude Linting"
+exclude_start: "# Begin Exclude Linting"
+exclude_end: "# End Exclude Linting"
+encoding: "ISO-8859-1"
