@@ -285,31 +285,5 @@ ggsave(
 
 
 # plotly
-dt_school_top_change %>%
-  filter(rank <= 50) %>%
-  ggplot(aes(
-    x = score_by_major_change,
-    y = reorder(school, score_by_school_scale),
-    color = ifelse(score_by_major_change > 0, "#00BA38", "#F8756D")
-  )) +
-  geom_point(size = 5, alpha = .5) +
-  scale_color_identity() +
-  coord_cartesian(xlim = c(-5, 5)) +
-  # scale_x_log10() +
-  theme_bw() +
-  theme(
-    axis.text.x = element_text(
-      angle = 45,
-      hjust = 1,
-      family = "Canger",
-      size = 25
-    ),
-    axis.text.y = element_text(family = "Canger", size = 50),
-    axis.title.x = element_text(size = 50),
-    axis.title.y = element_text(size = 50),
-    strip.text = element_text(size = 45),
-    title = element_text(family = "Canger", size = 75)
-  ) +
-  labs(title = "Top50高校热度变化", x = "专业热度变化", y = "学校名称") +
-  ggplotly()
+
 
