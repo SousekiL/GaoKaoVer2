@@ -285,5 +285,38 @@ ggsave(
 
 
 # plotly
+# https://rdrr.io/cran/plotly/man/ggplotly.html
+## Not run:
+# simple example
+ggpenguins <- qplot(bill_length_mm, body_mass_g,
+  data = palmerpenguins::penguins, color = species
+)
+ggplotly(ggpenguins)
+
+data(canada.cities, package = "maps")
+viz <- ggplot(canada.cities, aes(long, lat)) +
+  borders(regions = "canada") +
+  coord_equal() +
+  geom_point(aes(text = name, size = pop), colour = "red", alpha = 1 / 2)
+ggplotly(viz, tooltip = c("text", "size"))
+
+# linked scatterplot brushing
+d <- highlight_key(mtcars)
+qplot(data = d, x = mpg, y = wt) %>%
+  subplot(qplot(data = d, x = mpg, y = vs)) %>%
+  layout(title = "Click and drag to select points") %>%
+  highlight("plotly_selected")
+
+
+# more brushing (i.e. highlighting) examples
+demo("crosstalk-highlight-ggplotly", package = "plotly")
+
+# client-side linked brushing in a scatterplot matrix
+highlight_key(palmerpenguins::penguins) %>%
+  GGally::ggpairs(aes(colour = Species), columns = 1:4) %>%
+  ggplotly(tooltip = c("x", "y", "colour")) %>%
+  highlight("plotly_selected")
+
+## End(Not run)
 
 
