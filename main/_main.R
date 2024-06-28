@@ -1,0 +1,375 @@
+#' ---
+#' title: "Changes in Popular Majors from 2020 to 2023"
+#' output: github_document
+#' ---
+
+#+ setup, include=FALSE
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/Users/sousekilyu/Documents/GitHub/GaoKaoVer2")
+
+#' ## Data preparation
+
+#+ message=FALSE
+source("~/Documents/GitHub/GaoKaoVer2/main/ETL.R")
+# Calculate the scaled score for each major based on its rank
+# The higher the score_by_major_scale, the more popular the major is
+dt_rank_cmb <- dt_rank_cmb %>%
+    group_by(year) %>%
+    mutate(
+        score_by_major_scale = 100 - (rank_by_major - min(rank_by_major)) / (max(rank_by_major) - min(rank_by_major)) * 100,
+        score_by_school_scale = 100 - (rank_by_school - min(rank_by_school)) / (max(rank_by_school) - min(rank_by_school)) * 100
+    ) %>%
+    ungroup()
+
+# Calculate the change in scores by major over time
+score_by_major_change <- dt_rank_cmb %>%
+    group_by(院校, major) %>%
+    filter(year %in% c(2020, 2023)) %>%
+    arrange(year) %>%
+    summarise(
+        # Calculate the change in scores by major over time
+        countn = n(),
+        score_by_major_early = first(score_by_major_scale),
+        # Get the first score for each major
+        score_by_major_later = last(score_by_major_scale),
+        # Get the last score for each major
+        score_by_major_change = score_by_major_later - score_by_major_early, # Calculate the change in scores
+        .groups = "keep"
+    ) %>%
+    filter(countn > 1) %>%
+    ungroup() %>%
+    arrange(desc(score_by_major_change)) # Arrange the data by the change in scores in descending order
+head(score_by_major_change)
+# slice(1:100)
+# The variable 'score_by_major_change' represents the change in popularity of a major.
+
+# Roughly categorize the majors
+majorData_rough$major <- as.character(majorData_rough$major)
+update_major_rough <- function(df, majorData_rough) {
+    df$major_rough <- NA
+    for (i in 1:nrow(majorData_rough)) {
+        df$major_rough[grepl(majorData_rough$noun[i], df$major)] <- majorData_rough$major[i]
+    }
+    df %<>%
+        mutate(major_rough = ifelse(!is.na(major_rough), major_rough, major))
+
+    return(df)
+}
+score_by_major_rough_change <- update_major_rough(score_by_major_change, majorData_rough)
+dt_rank_cmb_rough <- update_major_rough(dt_rank_cmb, majorData_rough)
+head(score_by_major_rough_change)
+
+
+#' ### function and theme
+#+ echo=FALSE, message=FALSE}
+my_theme_legend <- list(
+    theme(
+        axis.text.x = element_text(
+            angle = 45,
+            hjust = 1,
+            family = "Canger",
+            size = 25
+        ),
+        axis.text.y = element_text(family = "Canger", size = 50),
+        axis.title.x = element_text(size = 50),
+        axis.title.y = element_text(size = 50),
+        strip.text = element_text(size = 45),
+        title = element_text(family = "Canger", size = 75),
+        legend.position = c(.8, .07),
+        legend.title = element_text(family = "Canger", size = 45),
+        legend.text = element_text(family = "Canger", size = 45),
+        legend.spacing.y = unit(0.2, "cm")
+    )
+)
+
+my_theme <- list(
+    theme(
+        axis.text.x = element_text(
+            angle = 45,
+            hjust = 1,
+            family = "Canger",
+            size = 25
+        ),
+        axis.text.y = element_text(family = "Canger", size = 50),
+        axis.title.x = element_text(size = 50),
+        axis.title.y = element_text(size = 50),
+        strip.text = element_text(size = 45),
+        title = element_text(family = "Canger", size = 75),
+        legend.position = "none"
+    )
+)
+ggsaveTheme <- function(p, mytheme, filename, width, height, dpi) {
+    p <- p + mytheme
+    ggsave(
+        filename,
+        width = width,
+        height = height,
+        dpi = dpi
+    )
+}
+
+
+#' ## 热门专业变化趋势分析
+#' ### 哪些专业变多？哪些专业消失？
+#+ echo=FALSE, message=FALSE
+.tmp <- dt_rank_cmb_rough %>%
+    group_by(year, major) %>%
+    summarise(n = n_distinct(`院校`), .groups = "drop_last") %>%
+    mutate(n_over_total = n/sum(n)) %>% 
+    arrange(desc(n_over_total))
+
+
+#' ## 热门专业与考生成绩分布关系
+#' ### 高分段考生 vs 低分段考生
+#+ echo=FALSE, message=FALSE
+# 2020年：Calculate the average scores by major on different levels of score_by_major_early
+score_by_major_group_time <- dt_rank_cmb_rough %>%
+    group_by(year) %>%
+    mutate(
+        score_group = cut(
+            score_by_major_scale,
+            breaks = c(-Inf, 50, 70, 90, Inf),
+            labels = c("低分段", "中低分段", "中高分段", "高分段")
+        ),
+        score_group = cut(
+            score_by_major_scale,
+            breaks = c(-Inf, 50, 70, 90, Inf),
+            labels = c("低分段", "中低分段", "中高分段", "高分段")
+        )
+    ) 
+head(score_by_major_group_time)
+
+# plot
+generate_plot <- function(time) {
+    plot <- score_by_major_group_time %>%
+        filter(score_group %in% c("低分段", "高分段"),
+        year == time)  %>% 
+        # Assuming df is your data frame and 'your_column' is the column you want to modify
+        # mutate(major = paste0(substr(major, 1, 4), "\n", substr(major, 5, nchar(major)))) %>%
+        group_by(score_group, major) %>%
+        summarise(avg_scores = mean(score_by_major_scale, na.rm = TRUE), .groups = "keep") %>%
+        group_by(score_group) %>%
+        ggcharts::bar_chart(major, log(avg_scores), fill = score_group, facet = score_group, top_n = 30) +
+        theme_bw() +
+        theme(text = element_text(family = "Canger", size = 10)) +
+        labs(title = paste0(time, "年山东省报考热门专业"), x = "专业名称", y = "专业热度(对数值)")
+}
+# Generate plots
+# 2020
+p1 <- generate_plot(2020)
+print(p1)
+ggsaveTheme(p1,
+    mytheme = my_theme,
+    filename = "plot/major_by_score_2020.png",
+    width = 12,
+    height = 16,
+    dpi = 300
+)
+# 2023
+p2 <- generate_plot(2023)
+print(p2)
+ggsaveTheme(p2,
+    mytheme = my_theme,
+    filename = "plot/major_by_score_2023.png",
+    width = 12,
+    height = 16,
+    dpi = 300
+)
+
+
+#' ## 从低分段 跃迁至高分段的 学校和专业
+#+ echo=FALSE, message=FALSE
+# (中)高分段=>(中)低分段
+high2low <-score_by_major_group_time %>%
+    filter((year == 2020 & score_group %in% c("高分段", "中高分段")) |
+        (year == 2023 & score_group %in% c("低分段", "中低分段"))) %>%
+    dplyr::select(院校, major, major_rough, year, score_by_major_scale) %>%
+    group_by(院校, major, major_rough) %>%
+    arrange(year) %>%
+    summarise(
+        countn = n(),
+        score_by_major_early = first(score_by_major_scale),
+        score_by_major_later = last(score_by_major_scale),
+        score_by_major_change = score_by_major_later - score_by_major_early,
+        .groups = "drop"
+    ) %>%
+    filter(countn == 2) %>%
+    arrange(score_by_major_change) %>%
+    mutate(school_major = paste0(substr(院校, 5, nchar(院校)), "+", major))
+
+# (中)高分段=>(中)低分段
+low2high <- score_by_major_group_time %>%
+    filter((year == 2020 & score_group %in% c("低分段", "中低分段")) |
+        (year == 2023 & score_group %in% c("高分段", "中高分段"))) %>%
+    dplyr::select(院校, major, major_rough, year, score_by_major_scale) %>%
+    group_by(院校, major, major_rough) %>%
+    arrange(year) %>%
+    summarise(
+        countn = n(),
+        score_by_major_early = first(score_by_major_scale),
+        score_by_major_later = last(score_by_major_scale),
+        score_by_major_change = score_by_major_later - score_by_major_early,
+        .groups = "drop"
+    ) %>%
+    filter(countn == 2) %>%
+    arrange(desc(score_by_major_change)) %>%
+    mutate(school_major = paste0(substr(院校, 5, nchar(院校)), "+", major))
+# plot: https://www.r-bloggers.com/2017/06/bar-plots-and-modern-alternatives/
+phl01 <- high2low[1:30, ] %>%
+  ggdotchart(
+    x = "school_major", y = "score_by_major_change",
+    color = "#F8756D",
+    sorting = "descending",
+    add = "segments",
+    dot.size = 6,
+    ggtheme = theme_pubr()
+  ) +
+  rotate() +
+  # theme_bw() +
+  theme(text = element_text(family = "Canger", size = 10)) +
+  labs(title = "2020年到2023年(中)高分段=>(中)低分段专业", x = "学校+专业", y = "热度变化")
+print(phl01)
+ggsaveTheme(phl01,
+  mytheme = my_theme,
+  filename = "plot/high2low.png",
+  width = 12,
+  height = 16,
+  dpi = 300
+)
+phl02 <- low2high[1:30, ] %>%
+    ggdotchart(
+        x = "school_major", y = "score_by_major_change",
+        color = "#00BA38",
+        sorting = "ascending",
+        add = "segments",
+        dot.size = 6, 
+        ggtheme = theme_pubr()
+    ) +
+    rotate() +
+    # theme_bw() +
+    theme(text = element_text(family = "Canger", size = 10)) +
+    labs(title = "2020年到2023年(中)低分段=>(中)高分段专业", x = "学校+专业", y = "热度变化")
+print(phl02)
+ggsaveTheme(phl02,
+  mytheme = my_theme,
+  filename = "plot/low2high.png",
+  width = 12,
+  height = 16,
+  dpi = 300
+)
+
+#' ## 2020-2023专业热度变化分布
+#+ echo=FALSE, message=FALSE
+# Plot the distribution of the change in scores by major
+# Calculate the average scores by major
+avg_scores <- score_by_major_rough_change %>%
+    filter(major_rough %in% majorData_rough$major) %>%
+    group_by(major_rough) %>%
+    summarise(avg_score = mean(score_by_major_change), .groups = "keep")
+head(avg_scores)
+# Add the average scores to the graph
+p <- score_by_major_rough_change %>%
+    filter(major_rough %in% majorData_rough$major) %>%
+    mutate(color = ifelse(score_by_major_change >= 0, "上涨", "下降")) %>%
+    ggplot(aes(x = score_by_major_change, fill = color)) +
+    geom_histogram(bins = 100) +
+    facet_wrap(~ reorder(major_rough, score_by_major_change, FUN = mean), dir = "h") +
+    coord_cartesian(xlim = c(-30, 30), ylim = c(0, 150)) +
+    scale_fill_manual(
+        values = c("上涨" = "#00BA38", "下降" = "#F8756D"),
+        labels = c("上涨" = "热度上涨", "下降" = "热度下降"),
+        name = "专业热度变化"
+    ) +
+    theme_bw() +
+    theme(
+        text = element_text(family = "Canger", size = 10),
+        legend.position = c(.8, .07),
+    ) +
+    labs(title = "各专业类别涨幅和降幅分布", x = "2020年 -> 2023年热度变化", y = "数量")
+# save png
+print(p)
+ggsaveTheme(p,
+    mytheme = my_theme_legend,
+    filename = "plot/score_by_major_rough_change.png",
+    width = 16,
+    height = 12,
+    dpi = 300
+)
+
+
+#' ## 重点高校热度变化
+#+ echo=FALSE, message=FALSE
+# !!! 院校位次分数根据中位数排名，而非最低位次
+dt_school_top <- dt_rank_cmb %>%
+    mutate(school = substr(院校, 5, nchar(院校))) %>%
+    filter(year == 2023) %>%
+    mutate(rank = dense_rank(desc(score_by_school_scale))) %>%
+    # filter(rank <= 30) %>%
+    ungroup()
+dt_school_top_change <- score_by_major_rough_change %>%
+    filter(院校 %in% dt_school_top$院校) %>%
+    left_join(unique(select(dt_school_top, 院校, score_by_school_scale, school, rank)),
+        by = "院校"
+    )
+head(dt_school_top_change)
+
+p_school_change <- dt_school_top_change %>%
+    filter(rank <= 50) %>%
+    ggplot(aes(
+        x = score_by_major_change,
+        y = reorder(school, score_by_school_scale),
+        color = ifelse(score_by_major_change > 0, "#00BA38", "#F8756D")
+    )) +
+    geom_point(size = 5, alpha = .5) +
+    scale_color_identity() +
+    # scale_x_log10() +
+    theme_bw() +
+    theme(text = element_text(family = "Canger", size = 10)) +
+    labs(title = "Top50高校热度变化", x = "专业热度变化", y = "学校名称")
+# save png
+print(p_school_change)
+ggsaveTheme(p_school_change, 
+    mytheme = my_theme,
+    filename = "plot/top_uni_change_by_major.png",
+    width = 12,
+    height = 16,
+    dpi = 300
+)
+
+dt_school_top <- dt_rank_cmb %>%
+    mutate(school = substr(院校, 5, nchar(院校))) %>%
+    filter(year == 2023) %>%
+    mutate(rank = dense_rank(desc(score_by_school_scale))) %>%
+    # filter(rank <= 30) %>%
+    ungroup()
+dt_school_top_change <- score_by_major_rough_change %>%
+    filter(院校 %in% dt_school_top$院校) %>%
+    left_join(unique(select(dt_school_top, 院校, score_by_school_scale, school, rank)),
+        by = "院校"
+    )
+head(dt_school_top_change)
+# zoom out
+p_school_change_zoom <- dt_school_top_change %>%
+    filter(rank <= 50) %>%
+    ggplot(aes(
+        x = score_by_major_change,
+        y = reorder(school, score_by_school_scale),
+        color = ifelse(score_by_major_change > 0, "#00BA38", "#F8756D")
+    )) +
+    geom_point(size = 5, alpha = .5) +
+    scale_color_identity() +
+    coord_cartesian(xlim = c(-5, 5)) +
+    # scale_x_log10() +
+    theme_bw() +
+    theme(text = element_text(family = "Canger", size = 10)) +
+    labs(title = "Top50高校热度变化", x = "专业热度变化", y = "学校名称")
+# save png
+print(p_school_change_zoom)
+ggsaveTheme(p_school_change_zoom, 
+    mytheme = my_theme,
+    filename = "plot/top_uni_change_by_major_zoom.png",
+    width = 12,
+    height = 16,
+    dpi = 300
+)
+

@@ -15,6 +15,8 @@ library(showtext)
 library(ggstance)
 library(ggbreak)
 library(plotly)
+library(ggpubr)
+
 font_add("Canger", "/Library/Fonts/仓耳今楷01-W04.ttf")
 font_families()
 showtext_auto()  # 全局自动使用
