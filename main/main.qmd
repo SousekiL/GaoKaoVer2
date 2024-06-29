@@ -12,7 +12,7 @@ knitr::opts_knit$set(root.dir = "/Users/sousekilyu/Documents/GitHub/GaoKaoVer2")
 
 ```{r, message=FALSE}
 source("~/Documents/GitHub/GaoKaoVer2/main/etl.R")
-source(/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/function.r)
+source("/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/function.r")
 # Calculate the scaled score for each major based on its rank
 # The higher the score_by_major_scale, the more popular the major is
 dt_rank_cmb <- dt_rank_cmb %>%
