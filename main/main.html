@@ -104,77 +104,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 3.5.0.
 ℹ Please use the `legend.position.inside` argument of `theme()` instead.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the scaled score for each major based on its rank</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The higher the score_by_major_scale, the more popular the major is</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dt_rank_cmb <span class="ot">&lt;-</span> dt_rank_cmb <span class="sc">%&gt;%</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">score_by_major_scale =</span> <span class="dv">100</span> <span class="sc">-</span> (rank_by_major <span class="sc">-</span> <span class="fu">min</span>(rank_by_major)) <span class="sc">/</span> (<span class="fu">max</span>(rank_by_major) <span class="sc">-</span> <span class="fu">min</span>(rank_by_major)) <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">score_by_school_scale =</span> <span class="dv">100</span> <span class="sc">-</span> (rank_by_school <span class="sc">-</span> <span class="fu">min</span>(rank_by_school)) <span class="sc">/</span> (<span class="fu">max</span>(rank_by_school) <span class="sc">-</span> <span class="fu">min</span>(rank_by_school)) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the change in scores by major over time</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>score_by_major_change <span class="ot">&lt;-</span> dt_rank_cmb <span class="sc">%&gt;%</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(院校, major) <span class="sc">%&gt;%</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2020</span>, <span class="dv">2023</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(year) <span class="sc">%&gt;%</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate the change in scores by major over time</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">countn =</span> <span class="fu">n</span>(),</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">score_by_major_early =</span> <span class="fu">first</span>(score_by_major_scale),</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get the first score for each major</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">score_by_major_later =</span> <span class="fu">last</span>(score_by_major_scale),</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get the last score for each major</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">score_by_major_change =</span> score_by_major_later <span class="sc">-</span> score_by_major_early, <span class="co"># Calculate the change in scores</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"keep"</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(countn <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(score_by_major_change)) <span class="co"># Arrange the data by the change in scores in descending order</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(score_by_major_change)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 6
-  院校                    major countn score_by_major_early score_by_major_later
-  &lt;chr&gt;                   &lt;chr&gt;  &lt;int&gt;                &lt;dbl&gt;                &lt;dbl&gt;
-1 D904北京工业大学耿丹学… 计算…      2                 12.5                 75.4
-2 D601长春工业大学人文信… 软件…      2                 13.2                 72.6
-3 D905南京工业大学浦江学… 计算…      2                 25.1                 78.8
-4 D991江苏科技大学苏州理… 能源…      2                 22.4                 71.0
-5 D897天津理工大学中环信… 数据…      2                 19.5                 67.3
-6 D897天津理工大学中环信… 软件…      2                 20.8                 66.7
-# ℹ 1 more variable: score_by_major_change &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># slice(1:100)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The variable 'score_by_major_change' represents the change in popularity of a major.</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Roughly categorize the majors</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>majorData_rough<span class="sc">$</span>major <span class="ot">&lt;-</span> <span class="fu">as.character</span>(majorData_rough<span class="sc">$</span>major)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>update_major_rough <span class="ot">&lt;-</span> <span class="cf">function</span>(df, majorData_rough) {</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    df<span class="sc">$</span>major_rough <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(majorData_rough)) {</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        df<span class="sc">$</span>major_rough[<span class="fu">grepl</span>(majorData_rough<span class="sc">$</span>noun[i], df<span class="sc">$</span>major)] <span class="ot">&lt;-</span> majorData_rough<span class="sc">$</span>major[i]</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    df <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">major_rough =</span> <span class="fu">ifelse</span>(<span class="sc">!</span><span class="fu">is.na</span>(major_rough), major_rough, major))</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(df)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>score_by_major_rough_change <span class="ot">&lt;-</span> <span class="fu">update_major_rough</span>(score_by_major_change, majorData_rough)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>dt_rank_cmb_rough <span class="ot">&lt;-</span> <span class="fu">update_major_rough</span>(dt_rank_cmb, majorData_rough)</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(score_by_major_rough_change)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 7
-  院校                    major countn score_by_major_early score_by_major_later
-  &lt;chr&gt;                   &lt;chr&gt;  &lt;int&gt;                &lt;dbl&gt;                &lt;dbl&gt;
-1 D904北京工业大学耿丹学… 计算…      2                 12.5                 75.4
-2 D601长春工业大学人文信… 软件…      2                 13.2                 72.6
-3 D905南京工业大学浦江学… 计算…      2                 25.1                 78.8
-4 D991江苏科技大学苏州理… 能源…      2                 22.4                 71.0
-5 D897天津理工大学中环信… 数据…      2                 19.5                 67.3
-6 D897天津理工大学中环信… 软件…      2                 20.8                 66.7
-# ℹ 2 more variables: score_by_major_change &lt;dbl&gt;, major_rough &lt;chr&gt;</code></pre>
-</div>
 </div>
 </section>
 <section id="热门专业变化趋势分析" class="level2">
@@ -189,18 +118,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="高分段考生-vs-低分段考生">高分段考生 vs 低分段考生</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 10
-# Groups:   year [1]
-  院校      major 计划数 rank_by_major rank_by_school  year score_by_major_scale
-  &lt;chr&gt;     &lt;chr&gt;  &lt;dbl&gt;         &lt;dbl&gt;          &lt;dbl&gt; &lt;dbl&gt;                &lt;dbl&gt;
-1 A001北京… 文科…     25           181           146.  2023                 99.9
-2 A001北京… 理科…     44           110           146.  2023                100. 
-3 A002中国… 人力…      2           999           851   2023                 99.7
-4 A002中国… 人工…      2           561           851   2023                 99.8
-5 A002中国… 国际…      5          1312           851   2023                 99.6
-6 A002中国… 工商…     13          1093           851   2023                 99.6
-# ℹ 3 more variables: score_by_school_scale &lt;dbl&gt;, major_rough &lt;chr&gt;,
-#   score_group &lt;fct&gt;</code></pre>
+<pre><code># A tibble: 6 × 14
+# Groups:   year [2]
+  院校  major frequency rank_by_major rank_by_school  year school city  province
+  &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;   
+1 C928… 油气…        10        260585         256142  2020 泉州…  泉州… 福建省  
+2 C928… 汽车…         5        259516         256142  2020 泉州…  泉州… 福建省  
+3 C928… 计算…         5        257697         256142  2020 泉州…  泉州… 福建省  
+4 C928… 机械…         5        256142         256142  2020 泉州…  泉州… 福建省  
+5 D857… 房地…        90        250390         243940  2021 山东…  德州… 山东省  
+6 D857… 道路…        45        249705         243940  2021 山东…  德州… 山东省  
+# ℹ 5 more variables: score_by_major_scale &lt;dbl&gt;, score_by_school_scale &lt;dbl&gt;,
+#   major_rough &lt;chr&gt;, score_group &lt;fct&gt;, score_group_school &lt;fct&gt;</code></pre>
 </div>
 <div class="cell-output-display">
 <p><img src="main_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
@@ -242,42 +171,56 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="重点高校热度变化" class="level2">
-<h2 class="anchored" data-anchor-id="重点高校热度变化">重点高校热度变化</h2>
+<section id="热门高校变化" class="level2">
+<h2 class="anchored" data-anchor-id="热门高校变化">热门高校变化</h2>
+<section id="热门高校一线新一线城市聚集度变化" class="level3">
+<h3 class="anchored" data-anchor-id="热门高校一线新一线城市聚集度变化">热门高校一线&amp;新一线城市聚集度变化</h3>
+</section>
+<section id="重点高校专业热度变化-高分段学校的低分段专业同理" class="level3">
+<h3 class="anchored" data-anchor-id="重点高校专业热度变化-高分段学校的低分段专业同理">重点高校专业热度变化 / 高分段学校的低分段专业，同理</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 10
-  院校                    major countn score_by_major_early score_by_major_later
-  &lt;chr&gt;                   &lt;chr&gt;  &lt;int&gt;                &lt;dbl&gt;                &lt;dbl&gt;
-1 D904北京工业大学耿丹学… 计算…      2                 12.5                 75.4
-2 D601长春工业大学人文信… 软件…      2                 13.2                 72.6
-3 D905南京工业大学浦江学… 计算…      2                 25.1                 78.8
-4 D991江苏科技大学苏州理… 能源…      2                 22.4                 71.0
-5 D897天津理工大学中环信… 数据…      2                 19.5                 67.3
-6 D897天津理工大学中环信… 软件…      2                 20.8                 66.7
+<pre><code># A tibble: 6 × 12
+  院校    major province city   countn score_by_major_early score_by_major_later
+  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;int&gt;                &lt;dbl&gt;                &lt;dbl&gt;
+1 D904北… 计算… 北京市   北京市      2                 12.5                 75.4
+2 D601长… 软件… 吉林省   长春市      2                 13.2                 72.6
+3 D905南… 计算… 江苏省   南京市      2                 25.1                 78.8
+4 D991江… 能源… 江苏省   苏州市      2                 22.4                 71.0
+5 D897天… 数据… 天津市   天津市      2                 19.5                 67.3
+6 D897天… 软件… 天津市   天津市      2                 20.8                 66.7
 # ℹ 5 more variables: score_by_major_change &lt;dbl&gt;, major_rough &lt;chr&gt;,
 #   score_by_school_scale &lt;dbl&gt;, school &lt;chr&gt;, rank &lt;int&gt;</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="main_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<p><img src="main_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 10
-  院校                    major countn score_by_major_early score_by_major_later
-  &lt;chr&gt;                   &lt;chr&gt;  &lt;int&gt;                &lt;dbl&gt;                &lt;dbl&gt;
-1 D904北京工业大学耿丹学… 计算…      2                 12.5                 75.4
-2 D601长春工业大学人文信… 软件…      2                 13.2                 72.6
-3 D905南京工业大学浦江学… 计算…      2                 25.1                 78.8
-4 D991江苏科技大学苏州理… 能源…      2                 22.4                 71.0
-5 D897天津理工大学中环信… 数据…      2                 19.5                 67.3
-6 D897天津理工大学中环信… 软件…      2                 20.8                 66.7
+<pre><code># A tibble: 6 × 12
+  院校    major province city   countn score_by_major_early score_by_major_later
+  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;int&gt;                &lt;dbl&gt;                &lt;dbl&gt;
+1 D904北… 计算… 北京市   北京市      2                 12.5                 75.4
+2 D601长… 软件… 吉林省   长春市      2                 13.2                 72.6
+3 D905南… 计算… 江苏省   南京市      2                 25.1                 78.8
+4 D991江… 能源… 江苏省   苏州市      2                 22.4                 71.0
+5 D897天… 数据… 天津市   天津市      2                 19.5                 67.3
+6 D897天… 软件… 天津市   天津市      2                 20.8                 66.7
 # ℹ 5 more variables: score_by_major_change &lt;dbl&gt;, major_rough &lt;chr&gt;,
 #   score_by_school_scale &lt;dbl&gt;, school &lt;chr&gt;, rank &lt;int&gt;</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="main_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid" width="672"></p>
+<p><img src="main_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+</section>
+<section id="名校冷门专业对高分考生的吸引力" class="level3">
+<h3 class="anchored" data-anchor-id="名校冷门专业对高分考生的吸引力">名校「冷门」专业对高分考生的吸引力</h3>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="main_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
 </section>
 
 </main>

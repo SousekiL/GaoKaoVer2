@@ -3,32 +3,49 @@ title: "Changes in Popular Majors from 2020 to 2023"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
+
+
+```r
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = "/Users/sousekilyu/Documents/GitHub/GaoKaoVer2")
 ```
 
+
 ## Data preparation
 
-```{r, message=FALSE}
+
+
+```r
 source("~/Documents/GitHub/GaoKaoVer2/main/etl.R")
+```
+
+```
+## Joining with `by = join_by(school)`
+```
+
+```r
 source("/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/function.r")
 ```
 
+
 ## 热门专业变化趋势分析
 ### 哪些专业变多？哪些专业消失？
-```{r, echo=FALSE, message=FALSE}
+
+
+```r
 .tmp <- dt_rank_cmb_rough %>%
     group_by(year, major) %>%
     summarise(n = n_distinct(`院校`), .groups = "drop_last") %>%
     mutate(n_over_total = n/sum(n)) %>% 
     arrange(desc(n_over_total))
-
 ```
+
 
 ## 热门专业与考生成绩分布关系
 ### 高分段考生 vs 低分段考生
-```{r, echo=FALSE, message=FALSE}
+
+
+```r
 score_by_major_group_time <- dt_rank_cmb_rough %>%
     group_by(year) %>%
     arrange(score_by_major_scale) %>% 
@@ -48,6 +65,23 @@ score_by_major_group_time <- dt_rank_cmb_rough %>%
     )
     )
 head(score_by_major_group_time)
+```
+
+```
+## # A tibble: 6 × 14
+## # Groups:   year [2]
+##   院校                 major       frequency rank_by_major rank_by_school  year school city  province score_by_major_scale
+##   <chr>                <chr>           <dbl>         <dbl>          <dbl> <dbl> <chr>  <chr> <chr>                   <dbl>
+## 1 C928泉州职业技术大学 油气储运工…        10        260585         256142  2020 泉州…  泉州… 福建省                   1.19
+## 2 C928泉州职业技术大学 汽车服务工…         5        259516         256142  2020 泉州…  泉州… 福建省                   1.60
+## 3 C928泉州职业技术大学 计算机类            5        257697         256142  2020 泉州…  泉州… 福建省                   2.29
+## 4 C928泉州职业技术大学 机械设计制…         5        256142         256142  2020 泉州…  泉州… 福建省                   2.88
+## 5 D857山东华宇工学院   房地产开发…        90        250390         243940  2021 山东…  德州… 山东省                   3.15
+## 6 D857山东华宇工学院   道路桥梁与…        45        249705         243940  2021 山东…  德州… 山东省                   3.41
+## # ℹ 4 more variables: score_by_school_scale <dbl>, major_rough <chr>, score_group <fct>, score_group_school <fct>
+```
+
+```r
 generate_plot <- function(time) {
     plot <- score_by_major_group_time %>%
         filter(
@@ -66,6 +100,11 @@ generate_plot <- function(time) {
 # 2020
 p1 <- generate_plot(2020)
 print(p1)
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+
+```r
 ggsaveTheme(p1,
     mytheme = my_theme,
     filename = "plot/Figure 1.major_by_score_2020.png",
@@ -76,6 +115,11 @@ ggsaveTheme(p1,
 # 2023
 p2 <- generate_plot(2023)
 print(p2)
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-2.png)
+
+```r
 ggsaveTheme(p2,
     mytheme = my_theme,
     filename = "plot/Figure 2.major_by_score_2023.png",
@@ -85,8 +129,11 @@ ggsaveTheme(p2,
 )
 ```
 
+
 ## 从低分段 跃迁至高分段的 学校和专业
-```{r, echo=FALSE, message=FALSE}
+
+
+```r
 # (中)高分段=>(中)低分段
 high2low <- score_by_major_group_time %>%
     filter((year == 2020 & score_group %in% c("高分段", "中高分段")) |
@@ -139,6 +186,11 @@ phl01 <- high2low[1:30, ] %>%
     theme(text = element_text(family = "Canger", size = 10)) +
     labs(title = "Majors from High to Low Scores Level", x = "Universities / Majors", y = "Δ Popularity")
 print(phl01)
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
+
+```r
 ggsaveTheme(phl01,
     mytheme = my_theme,
     filename = "plot/Figure 3.high2low.png",
@@ -160,6 +212,11 @@ phl02 <- low2high[1:30, ] %>%
     theme(text = element_text(family = "Canger", size = 10)) +
     labs(title = "Majors from Low to High Scores Level", x = "School / Major", y = "Δ Popularity")
 print(phl02)
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-2.png)
+
+```r
 ggsaveTheme(phl02,
     mytheme = my_theme,
     filename = "plot/Figure 4.low2high.png",
@@ -169,8 +226,11 @@ ggsaveTheme(phl02,
 )
 ```
 
+
 ## 2020-2023专业热度变化分布
-```{r, echo=FALSE, message=FALSE}
+
+
+```r
 # Plot the distribution of the change in scores by major
 # Calculate the average scores by major
 avg_scores <- score_by_major_rough_change %>%
@@ -178,6 +238,22 @@ avg_scores <- score_by_major_rough_change %>%
     group_by(major_rough) %>%
     summarise(avg_score = mean(score_by_major_change), .groups = "keep")
 head(avg_scores)
+```
+
+```
+## # A tibble: 6 × 2
+## # Groups:   major_rough [6]
+##   major_rough        avg_score
+##   <chr>                  <dbl>
+## 1 临床医学               4.22 
+## 2 信息管理与图书情报     4.48 
+## 3 公共管理类            -0.646
+## 4 农业类                 5.17 
+## 5 化学类                 2.30 
+## 6 历史学类               4.88
+```
+
+```r
 # Add the average scores to the graph
 p <- score_by_major_rough_change %>%
     filter(major_rough %in% majorData_rough$major) %>%
@@ -199,6 +275,11 @@ p <- score_by_major_rough_change %>%
     labs(title = "Histogram of Popularity Changes in Major Categories", x = "2020-2023 Δ Popularity", y = "Freq.")
 # save png
 print(p)
+```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
+
+```r
 ggsaveTheme(p,
     mytheme = my_theme_legend,
     filename = "plot/Figure 5.score_by_major_rough_change.png",
@@ -207,9 +288,12 @@ ggsaveTheme(p,
     dpi = 300
 )
 ```
+
 ## 热门高校变化
 ### 热门高校一线&新一线城市聚集度变化
-```{r, echo=FALSE, message=FALSE}
+
+
+```r
 # # 高分学校在大城市占比 vs 高分专业在大城市占比。学校分数线体现底线思维，专业分数线体现择优思维。结果：重点城市的高分学校聚集度上涨，高分专业聚集度没有上涨
 # #' 说明：
 # #' 1. 从学校报考维度，学生倾向于去重点城市的学校就读，区域因素很重要，用重点城市学校「托底」；
@@ -241,8 +325,11 @@ ggsaveTheme(p,
 #     )
 ```
 
+
 ### 重点高校专业热度变化 / 高分段学校的低分段专业，同理
-```{r, echo=FALSE, message=FALSE}
+
+
+```r
 # !!! 考虑到学校最低分收到专业极大影响，院校位次分数根据中位数排名，而非最低位次
 dt_school_top <- dt_rank_cmb %>%
     mutate(school = substr(院校, 5, nchar(院校))) %>%
@@ -256,7 +343,22 @@ dt_school_top_change <- score_by_major_rough_change %>%
         by = "院校"
     )
 head(dt_school_top_change)
+```
 
+```
+## # A tibble: 6 × 12
+##   院校            major province city   countn score_by_major_early score_by_major_later score_by_major_change major_rough
+##   <chr>           <chr> <chr>    <chr>   <int>                <dbl>                <dbl>                 <dbl> <chr>      
+## 1 D904北京工业大… 计算… 北京市   北京市      2                 12.5                 75.4                  63.0 计算机类   
+## 2 D601长春工业大… 软件… 吉林省   长春市      2                 13.2                 72.6                  59.4 软件工程   
+## 3 D905南京工业大… 计算… 江苏省   南京市      2                 25.1                 78.8                  53.7 计算机类   
+## 4 D991江苏科技大… 能源… 江苏省   苏州市      2                 22.4                 71.0                  48.6 能源与动力…
+## 5 D897天津理工大… 数据… 天津市   天津市      2                 19.5                 67.3                  47.8 数据科学与…
+## 6 D897天津理工大… 软件… 天津市   天津市      2                 20.8                 66.7                  45.9 软件工程   
+## # ℹ 3 more variables: score_by_school_scale <dbl>, school <chr>, rank <int>
+```
+
+```r
 p_school_change <- dt_school_top_change %>%
     filter(rank <= 50) %>%
     ggplot(aes(
@@ -272,6 +374,11 @@ p_school_change <- dt_school_top_change %>%
     labs(title = "Popularity Changes in Top 50 Universities' Majors, 2020-2023", x = "Δ Popularity", y = "Universities")
 # save png
 print(p_school_change)
+```
+
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
+
+```r
 ggsaveTheme(p_school_change,
     mytheme = my_theme,
     filename = "plot/Figure 6.top_uni_change_by_major.png",
@@ -292,6 +399,22 @@ dt_school_top_change <- score_by_major_rough_change %>%
         by = "院校"
     )
 head(dt_school_top_change)
+```
+
+```
+## # A tibble: 6 × 12
+##   院校            major province city   countn score_by_major_early score_by_major_later score_by_major_change major_rough
+##   <chr>           <chr> <chr>    <chr>   <int>                <dbl>                <dbl>                 <dbl> <chr>      
+## 1 D904北京工业大… 计算… 北京市   北京市      2                 12.5                 75.4                  63.0 计算机类   
+## 2 D601长春工业大… 软件… 吉林省   长春市      2                 13.2                 72.6                  59.4 软件工程   
+## 3 D905南京工业大… 计算… 江苏省   南京市      2                 25.1                 78.8                  53.7 计算机类   
+## 4 D991江苏科技大… 能源… 江苏省   苏州市      2                 22.4                 71.0                  48.6 能源与动力…
+## 5 D897天津理工大… 数据… 天津市   天津市      2                 19.5                 67.3                  47.8 数据科学与…
+## 6 D897天津理工大… 软件… 天津市   天津市      2                 20.8                 66.7                  45.9 软件工程   
+## # ℹ 3 more variables: score_by_school_scale <dbl>, school <chr>, rank <int>
+```
+
+```r
 # zoom out
 p_school_change_zoom <- dt_school_top_change %>%
     filter(rank <= 50) %>%
@@ -309,6 +432,11 @@ p_school_change_zoom <- dt_school_top_change %>%
     labs(title = "Popularity Changes in Top 50 Universities' Majors, 2020-2023", x = "Δ Popularity (Zoom out)", y = "Universities")
 # save png
 print(p_school_change_zoom)
+```
+
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-2.png)
+
+```r
 ggsaveTheme(p_school_change_zoom,
     mytheme = my_theme,
     filename = "plot/Figure 7.top_uni_change_by_major_zoom.png",
@@ -318,8 +446,11 @@ ggsaveTheme(p_school_change_zoom,
 )
 ```
 
+
 ### 名校「冷门」专业对高分考生的吸引力
-```{r, echo=FALSE, message=FALSE}
+
+
+```r
 # 名校冷门专业占比 变化不大
 project211 <- c(
     "北京大学", "中国人民大学", "清华大学", "北京交通大学", "北京工业大学", "北京航空航天大学",
@@ -362,6 +493,13 @@ dt02 <- score_by_major_group_time %>%
     )
 dt_merge <- left_join(dt01, dt02) %>%
     mutate(fraction02_plot = fraction01 * fraction02)
+```
+
+```
+## Joining with `by = join_by(year)`
+```
+
+```r
 real_value <- c(dt_merge$fraction01, dt_merge$fraction02)
 # plot dt_merge as barplot
 dp1 <- dt_merge %>%
@@ -384,6 +522,11 @@ dp1 <- dt_merge %>%
     labs(title = "% of Unpopular Majors in 985 & 211 Univs.", x = "Year", y = "Percentage %", fill = "Variable")
 
 print(dp1)
+```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
+
+```r
 dp1 <- dp1 +
     geom_text(aes(label = value2), position = position_dodge(width = 0.9), vjust = -0.25, size = 25)
 ggsaveTheme(dp1,
@@ -393,5 +536,5 @@ ggsaveTheme(dp1,
     height = 12,
     dpi = 300
 )
-
 ```
+

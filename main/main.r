@@ -1,34 +1,34 @@
----
-title: "Changes in Popular Majors from 2020 to 2023"
-output: github_document
----
+#' ---
+#' title: "Changes in Popular Majors from 2020 to 2023"
+#' output: github_document
+#' ---
+#' 
 
-```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = "/Users/sousekilyu/Documents/GitHub/GaoKaoVer2")
-```
 
-## Data preparation
+#' 
+#' ## Data preparation
+#' 
 
-```{r, message=FALSE}
 source("~/Documents/GitHub/GaoKaoVer2/main/etl.R")
 source("/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/function.r")
-```
 
-## 热门专业变化趋势分析
-### 哪些专业变多？哪些专业消失？
-```{r, echo=FALSE, message=FALSE}
+#' 
+#' ## 热门专业变化趋势分析
+#' ### 哪些专业变多？哪些专业消失？
+
 .tmp <- dt_rank_cmb_rough %>%
     group_by(year, major) %>%
     summarise(n = n_distinct(`院校`), .groups = "drop_last") %>%
     mutate(n_over_total = n/sum(n)) %>% 
     arrange(desc(n_over_total))
 
-```
 
-## 热门专业与考生成绩分布关系
-### 高分段考生 vs 低分段考生
-```{r, echo=FALSE, message=FALSE}
+#' 
+#' ## 热门专业与考生成绩分布关系
+#' ### 高分段考生 vs 低分段考生
+
 score_by_major_group_time <- dt_rank_cmb_rough %>%
     group_by(year) %>%
     arrange(score_by_major_scale) %>% 
@@ -83,10 +83,10 @@ ggsaveTheme(p2,
     height = 16,
     dpi = 300
 )
-```
 
-## 从低分段 跃迁至高分段的 学校和专业
-```{r, echo=FALSE, message=FALSE}
+#' 
+#' ## 从低分段 跃迁至高分段的 学校和专业
+
 # (中)高分段=>(中)低分段
 high2low <- score_by_major_group_time %>%
     filter((year == 2020 & score_group %in% c("高分段", "中高分段")) |
@@ -167,10 +167,10 @@ ggsaveTheme(phl02,
     height = 16,
     dpi = 300
 )
-```
 
-## 2020-2023专业热度变化分布
-```{r, echo=FALSE, message=FALSE}
+#' 
+#' ## 2020-2023专业热度变化分布
+
 # Plot the distribution of the change in scores by major
 # Calculate the average scores by major
 avg_scores <- score_by_major_rough_change %>%
@@ -206,10 +206,10 @@ ggsaveTheme(p,
     height = 12,
     dpi = 300
 )
-```
-## 热门高校变化
-### 热门高校一线&新一线城市聚集度变化
-```{r, echo=FALSE, message=FALSE}
+
+#' ## 热门高校变化
+#' ### 热门高校一线&新一线城市聚集度变化
+
 # # 高分学校在大城市占比 vs 高分专业在大城市占比。学校分数线体现底线思维，专业分数线体现择优思维。结果：重点城市的高分学校聚集度上涨，高分专业聚集度没有上涨
 # #' 说明：
 # #' 1. 从学校报考维度，学生倾向于去重点城市的学校就读，区域因素很重要，用重点城市学校「托底」；
@@ -239,10 +239,10 @@ ggsaveTheme(p,
 #     summarise(
 #         fraction = round(sum(ifelse(major_rough %in% c("软件工程", "电气类", "汉语言", "计算机类", "通信类"), 1, 0)) / n(), 3)
 #     )
-```
 
-### 重点高校专业热度变化 / 高分段学校的低分段专业，同理
-```{r, echo=FALSE, message=FALSE}
+#' 
+#' ### 重点高校专业热度变化 / 高分段学校的低分段专业，同理
+
 # !!! 考虑到学校最低分收到专业极大影响，院校位次分数根据中位数排名，而非最低位次
 dt_school_top <- dt_rank_cmb %>%
     mutate(school = substr(院校, 5, nchar(院校))) %>%
@@ -316,10 +316,10 @@ ggsaveTheme(p_school_change_zoom,
     height = 16,
     dpi = 300
 )
-```
 
-### 名校「冷门」专业对高分考生的吸引力
-```{r, echo=FALSE, message=FALSE}
+#' 
+#' ### 名校「冷门」专业对高分考生的吸引力
+
 # 名校冷门专业占比 变化不大
 project211 <- c(
     "北京大学", "中国人民大学", "清华大学", "北京交通大学", "北京工业大学", "北京航空航天大学",
@@ -394,4 +394,4 @@ ggsaveTheme(dp1,
     dpi = 300
 )
 
-```
+

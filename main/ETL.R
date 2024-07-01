@@ -16,7 +16,7 @@ library(ggstance)
 library(ggbreak)
 library(plotly)
 library(ggpubr)
-
+library(tidyverse)
 font_add("Canger", "/Library/Fonts/仓耳今楷01-W04.ttf")
 font_families()
 showtext_auto()  # 全局自动使用
@@ -56,7 +56,8 @@ row.names(majorData) <- NULL
   c("经济|贸易", "经济学类"),
   c("历史|文物|考古|文博", "历史学类"),
   c("政治学|思想政治", "政治学类"),
-  c("工商管理|管理科学", "工管/管科"),
+  c("工商管理", "工商管理"),
+  #c("管理科学", "管理科学与工程"),
   c("心理", "心理学"),
   c("公共管理|行政管理|社会保障", "公共管理类"),
   c("社会学|社会工作|人类学|民族学|民俗学", "社会学类"),
@@ -79,13 +80,13 @@ row.names(majorData) <- NULL
   c("临床药学|药学", "药学类"),
   c("林学|林业|草|动物|水产|农业", "农业类"),
   c("信息管理|档案|图书", "信息管理与图书情报"),
-  c("地球|地质", "地质学"),
-  c("地理|地理信息", "地理信息科学"),
-  c("物理|天文", "物理和天文学"),
-  c("海洋", "海洋科学"),
-  c("文科实验|文科试验|社会科学实验|社会科学试验|社科试验|社科实验", "文社科试验班"),
-  c("理科实验|理科试验", "理科试验班"),
-  c("工科实验|工科试验", "工科试验班")
+  c("地球|地质", "地质学")
+  # c("地理|地理信息", "地理信息科学"),
+  # c("物理|天文", "物理和天文学"),
+  # c("海洋", "海洋科学"),
+  # c("文科实验|文科试验|社会科学实验|社会科学试验|社科试验|社科实验", "文社科试验班"),
+  # c("理科实验|理科试验", "理科试验班"),
+  # c("工科实验|工科试验", "工科试验班")
 )
 majorData_rough <- .majorList2 %>%
   data.frame() %>%
@@ -188,6 +189,61 @@ dt2023_rank_cmb <- perform_operations(dt2023_cmb, dt2023_school, 2023)
 dt2022_rank_cmb <- perform_operations(dt2022_cmb, dt2022_school, 2022)
 dt2021_rank_cmb <- perform_operations(dt2021_cmb, dt2021_school, 2021)
 dt2020_rank_cmb <- perform_operations(dt2020_cmb, dt2020_school, 2020)  # Assuming you have a dt2020_cmb data
-dt_rank_cmb <- bind_rows(dt2023_rank_cmb, dt2022_rank_cmb, dt2021_rank_cmb, dt2020_rank_cmb)
+dt_rank_cmb <- bind_rows(dt2023_rank_cmb, dt2022_rank_cmb, dt2021_rank_cmb, dt2020_rank_cmb)  %>% 
+  mutate(school = substr(院校, 5, nchar(院校))) %>% 
+  left_join(dplyr::select(
+    read_excel("/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/data/全国普通高等学校名单.xlsx"),
+    school, city, province
+  ))
 
+# Calculate the scaled score for each major based on its rank
+# The higher the score_by_major_scale, the more popular the major is
+dt_rank_cmb <- dt_rank_cmb %>%
+  group_by(year) %>%
+  mutate(
+    score_by_major_scale = 100 - (rank_by_major - min(rank_by_major)) / (max(rank_by_major) - min(rank_by_major)) * 100,
+    score_by_school_scale = 100 - (rank_by_school - min(rank_by_school)) / (max(rank_by_school) - min(rank_by_school)) * 100
+  ) %>%
+  ungroup() %>%  
+  rename(frequency = "计划数")
+
+# Calculate the change in scores by major over time
+score_by_major_change <- dt_rank_cmb %>%
+  group_by(院校, major, province, city) %>%
+  filter(year %in% c(2020, 2023)) %>%
+  arrange(year) %>%
+  summarise(
+    # Calculate the change in scores by major over time
+    countn = n(),
+    score_by_major_early = first(score_by_major_scale),
+    # Get the first score for each major
+    score_by_major_later = last(score_by_major_scale),
+    # Get the last score for each major
+    score_by_major_change = score_by_major_later - score_by_major_early, # Calculate the change in scores
+    .groups = "keep"
+  ) %>%
+  filter(countn > 1) %>%
+  ungroup() %>%
+  arrange(desc(score_by_major_change)) # Arrange the data by the change in scores in descending order
+head(score_by_major_change)
+# slice(1:100)
+# The variable 'score_by_major_change' represents the change in popularity of a major.
+
+# Roughly categorize the majors
+majorData_rough$major <- as.character(majorData_rough$major)
+update_major_rough <- function(df, majorData_rough) {
+  df$major_rough <- NA
+  for (i in 1:nrow(majorData_rough)) {
+    df$major_rough[grepl(majorData_rough$noun[i], df$major)] <- majorData_rough$major[i]
+  }
+  df %<>%
+    mutate(major_rough = ifelse(!is.na(major_rough), major_rough, major))
+
+  return(df)
+}
+score_by_major_rough_change <- update_major_rough(score_by_major_change, majorData_rough)
+dt_rank_cmb_rough <- update_major_rough(dt_rank_cmb, majorData_rough)
+head(score_by_major_rough_change)
+
+## 重点城市
 
