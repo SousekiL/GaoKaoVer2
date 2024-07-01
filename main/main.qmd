@@ -395,3 +395,11 @@ ggsaveTheme(dp1,
 )
 
 ```
+
+# to R Script
+```{r, echo=FALSE, message=FALSE}
+# knitr::purl("/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/main.qmd",
+#     output = "/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/main.r",
+#     documentation = 2
+# )
+```
