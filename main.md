@@ -70,15 +70,16 @@ head(score_by_major_group_time)
 ```
 ## # A tibble: 6 × 14
 ## # Groups:   year [2]
-##   院校                 major       frequency rank_by_major rank_by_school  year school city  province score_by_major_scale
-##   <chr>                <chr>           <dbl>         <dbl>          <dbl> <dbl> <chr>  <chr> <chr>                   <dbl>
-## 1 C928泉州职业技术大学 油气储运工…        10        260585         256142  2020 泉州…  泉州… 福建省                   1.19
-## 2 C928泉州职业技术大学 汽车服务工…         5        259516         256142  2020 泉州…  泉州… 福建省                   1.60
-## 3 C928泉州职业技术大学 计算机类            5        257697         256142  2020 泉州…  泉州… 福建省                   2.29
-## 4 C928泉州职业技术大学 机械设计制…         5        256142         256142  2020 泉州…  泉州… 福建省                   2.88
-## 5 D857山东华宇工学院   房地产开发…        90        250390         243940  2021 山东…  德州… 山东省                   3.15
-## 6 D857山东华宇工学院   道路桥梁与…        45        249705         243940  2021 山东…  德州… 山东省                   3.41
-## # ℹ 4 more variables: score_by_school_scale <dbl>, major_rough <chr>, score_group <fct>, score_group_school <fct>
+##   院校            major frequency rank_by_major rank_by_school  year school city  province
+##   <chr>           <chr>     <dbl>         <dbl>          <dbl> <dbl> <chr>  <chr> <chr>   
+## 1 C928泉州职业技… 油气…        10        260585         256142  2020 泉州…  泉州… 福建省  
+## 2 C928泉州职业技… 汽车…         5        259516         256142  2020 泉州…  泉州… 福建省  
+## 3 C928泉州职业技… 计算…         5        257697         256142  2020 泉州…  泉州… 福建省  
+## 4 C928泉州职业技… 机械…         5        256142         256142  2020 泉州…  泉州… 福建省  
+## 5 D857山东华宇工… 房地…        90        250390         243940  2021 山东…  德州… 山东省  
+## 6 D857山东华宇工… 道路…        45        249705         243940  2021 山东…  德州… 山东省  
+## # ℹ 5 more variables: score_by_major_scale <dbl>, score_by_school_scale <dbl>,
+## #   major_rough <chr>, score_group <fct>, score_group_school <fct>
 ```
 
 ```r
@@ -347,15 +348,16 @@ head(dt_school_top_change)
 
 ```
 ## # A tibble: 6 × 12
-##   院校            major province city   countn score_by_major_early score_by_major_later score_by_major_change major_rough
-##   <chr>           <chr> <chr>    <chr>   <int>                <dbl>                <dbl>                 <dbl> <chr>      
-## 1 D904北京工业大… 计算… 北京市   北京市      2                 12.5                 75.4                  63.0 计算机类   
-## 2 D601长春工业大… 软件… 吉林省   长春市      2                 13.2                 72.6                  59.4 软件工程   
-## 3 D905南京工业大… 计算… 江苏省   南京市      2                 25.1                 78.8                  53.7 计算机类   
-## 4 D991江苏科技大… 能源… 江苏省   苏州市      2                 22.4                 71.0                  48.6 能源与动力…
-## 5 D897天津理工大… 数据… 天津市   天津市      2                 19.5                 67.3                  47.8 数据科学与…
-## 6 D897天津理工大… 软件… 天津市   天津市      2                 20.8                 66.7                  45.9 软件工程   
-## # ℹ 3 more variables: score_by_school_scale <dbl>, school <chr>, rank <int>
+##   院校              major province city   countn score_by_major_early score_by_major_later
+##   <chr>             <chr> <chr>    <chr>   <int>                <dbl>                <dbl>
+## 1 D904北京工业大学… 计算… 北京市   北京市      2                 12.5                 75.4
+## 2 D601长春工业大学… 软件… 吉林省   长春市      2                 13.2                 72.6
+## 3 D905南京工业大学… 计算… 江苏省   南京市      2                 25.1                 78.8
+## 4 D991江苏科技大学… 能源… 江苏省   苏州市      2                 22.4                 71.0
+## 5 D897天津理工大学… 数据… 天津市   天津市      2                 19.5                 67.3
+## 6 D897天津理工大学… 软件… 天津市   天津市      2                 20.8                 66.7
+## # ℹ 5 more variables: score_by_major_change <dbl>, major_rough <chr>,
+## #   score_by_school_scale <dbl>, school <chr>, rank <int>
 ```
 
 ```r
@@ -403,15 +405,16 @@ head(dt_school_top_change)
 
 ```
 ## # A tibble: 6 × 12
-##   院校            major province city   countn score_by_major_early score_by_major_later score_by_major_change major_rough
-##   <chr>           <chr> <chr>    <chr>   <int>                <dbl>                <dbl>                 <dbl> <chr>      
-## 1 D904北京工业大… 计算… 北京市   北京市      2                 12.5                 75.4                  63.0 计算机类   
-## 2 D601长春工业大… 软件… 吉林省   长春市      2                 13.2                 72.6                  59.4 软件工程   
-## 3 D905南京工业大… 计算… 江苏省   南京市      2                 25.1                 78.8                  53.7 计算机类   
-## 4 D991江苏科技大… 能源… 江苏省   苏州市      2                 22.4                 71.0                  48.6 能源与动力…
-## 5 D897天津理工大… 数据… 天津市   天津市      2                 19.5                 67.3                  47.8 数据科学与…
-## 6 D897天津理工大… 软件… 天津市   天津市      2                 20.8                 66.7                  45.9 软件工程   
-## # ℹ 3 more variables: score_by_school_scale <dbl>, school <chr>, rank <int>
+##   院校              major province city   countn score_by_major_early score_by_major_later
+##   <chr>             <chr> <chr>    <chr>   <int>                <dbl>                <dbl>
+## 1 D904北京工业大学… 计算… 北京市   北京市      2                 12.5                 75.4
+## 2 D601长春工业大学… 软件… 吉林省   长春市      2                 13.2                 72.6
+## 3 D905南京工业大学… 计算… 江苏省   南京市      2                 25.1                 78.8
+## 4 D991江苏科技大学… 能源… 江苏省   苏州市      2                 22.4                 71.0
+## 5 D897天津理工大学… 数据… 天津市   天津市      2                 19.5                 67.3
+## 6 D897天津理工大学… 软件… 天津市   天津市      2                 20.8                 66.7
+## # ℹ 5 more variables: score_by_major_change <dbl>, major_rough <chr>,
+## #   score_by_school_scale <dbl>, school <chr>, rank <int>
 ```
 
 ```r
@@ -452,27 +455,6 @@ ggsaveTheme(p_school_change_zoom,
 
 ```r
 # 名校冷门专业占比 变化不大
-project211 <- c(
-    "北京大学", "中国人民大学", "清华大学", "北京交通大学", "北京工业大学", "北京航空航天大学",
-    "北京理工大学", "北京科技大学", "北京化工大学", "北京邮电大学", "中国农业大学", "北京林业大学",
-    "北京中医药大学", "北京师范大学", "北京外国语大学", "中国传媒大学", "中央财经大学", "对外经济贸易大学",
-    "北京体育大学", "中央音乐学院", "中央民族大学", "中国政法大学", "华北电力大学", "南开大学",
-    "天津大学", "天津医科大学", "河北工业大学", "太原理工大学", "内蒙古大学", "辽宁大学",
-    "大连理工大学", "东北大学", "大连海事大学", "吉林大学", "延边大学", "东北师范大学",
-    "哈尔滨工业大学", "哈尔滨工程大学", "东北农业大学", "东北林业大学", "复旦大学", "同济大学",
-    "上海交通大学", "华东理工大学", "东华大学", "华东师范大学", "上海外国语大学", "上海财经大学",
-    "上海大学", "第二军医大学", "南京大学", "苏州大学", "东南大学", "南京航空航天大学",
-    "南京理工大学", "中国矿业大学", "河海大学", "江南大学", "南京农业大学", "中国药科大学",
-    "南京师范大学", "浙江大学", "安徽大学", "中国科学技术大学", "合肥工业大学", "厦门大学",
-    "福州大学", "南昌大学", "山东大学", "中国海洋大学", "中国石油大学", "郑州大学",
-    "武汉大学", "华中科技大学", "中国地质大学", "武汉理工大学", "华中农业大学", "华中师范大学",
-    "中南财经政法大学", "湖南大学", "中南大学", "湖南师范大学", "国防科技大学", "中山大学",
-    "暨南大学", "华南理工大学", "华南师范大学", "广西大学", "海南大学", "四川大学",
-    "重庆大学", "西南交通大学", "电子科技大学", "四川农业大学", "西南大学", "西南财经大学",
-    "贵州大学", "云南大学", "西藏大学", "西北大学", "西安交通大学", "西北工业大学",
-    "西安电子科技大学", "长安大学", "西北农林科技大学", "陕西师范大学", "第四军医大学", "兰州大学",
-    "青海大学", "宁夏大学", "新疆大学", "石河子大学"
-)
 dt01 <- score_by_major_group_time %>%
     filter(school %in% project211) %>%
     dplyr::select(school, major, major_rough, year, city, province, score_group) %>%
