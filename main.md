@@ -20,122 +20,6 @@ source("~/Documents/GitHub/GaoKaoVer2/main/etl.R")
 ```
 
 ```
-## data.table 1.14.8 using 1 threads (see ?getDTthreads).  Latest news: r-datatable.com
-```
-
-```
-## **********
-## This installation of data.table has not detected OpenMP support. It should still work but in single-threaded mode.
-## This is a Mac. Please read https://mac.r-project.org/openmp/. Please engage with Apple and ask them for support. Check r-datatable.com for updates, and our Mac instructions here: https://github.com/Rdatatable/data.table/wiki/Installation. After several years of many reports of installation problems on Mac, it's time to gingerly point out that there have been no similar problems on Windows or Linux.
-## **********
-```
-
-```
-## 
-## Attaching package: 'dplyr'
-```
-
-```
-## The following objects are masked from 'package:data.table':
-## 
-##     between, first, last
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```
-## Loading required package: RColorBrewer
-```
-
-```
-## Loading required package: sysfonts
-```
-
-```
-## Loading required package: showtextdb
-```
-
-```
-## 
-## Attaching package: 'ggstance'
-```
-
-```
-## The following objects are masked from 'package:ggplot2':
-## 
-##     geom_errorbarh, GeomErrorbarh
-```
-
-```
-## ggbreak v0.1.2
-## 
-## If you use ggbreak in published research, please cite the following paper:
-## 
-## S Xu, M Chen, T Feng, L Zhan, L Zhou, G Yu. Use ggbreak to effectively utilize
-## plotting space to deal with large datasets and outliers. Frontiers in Genetics.
-## 2021, 12:774846. doi: 10.3389/fgene.2021.774846
-```
-
-```
-## 
-## Attaching package: 'plotly'
-```
-
-```
-## The following object is masked from 'package:ggplot2':
-## 
-##     last_plot
-```
-
-```
-## The following object is masked from 'package:stats':
-## 
-##     filter
-```
-
-```
-## The following object is masked from 'package:graphics':
-## 
-##     layout
-```
-
-```
-## ── Attaching core tidyverse packages ────────────────────────────────── tidyverse 2.0.0 ──
-## ✔ forcats   1.0.0     ✔ readr     2.1.4
-## ✔ lubridate 1.9.2     ✔ tibble    3.2.1
-## ✔ purrr     1.0.2     ✔ tidyr     1.3.0
-## ── Conflicts ──────────────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::between()           masks data.table::between()
-## ✖ tidyr::extract()           masks magrittr::extract()
-## ✖ plotly::filter()           masks dplyr::filter(), stats::filter()
-## ✖ dplyr::first()             masks data.table::first()
-## ✖ ggstance::geom_errorbarh() masks ggplot2::geom_errorbarh()
-## ✖ lubridate::hour()          masks data.table::hour()
-## ✖ lubridate::isoweek()       masks data.table::isoweek()
-## ✖ dplyr::lag()               masks stats::lag()
-## ✖ dplyr::last()              masks data.table::last()
-## ✖ lubridate::mday()          masks data.table::mday()
-## ✖ lubridate::minute()        masks data.table::minute()
-## ✖ lubridate::month()         masks data.table::month()
-## ✖ lubridate::quarter()       masks data.table::quarter()
-## ✖ lubridate::second()        masks data.table::second()
-## ✖ purrr::set_names()         masks magrittr::set_names()
-## ✖ purrr::transpose()         masks data.table::transpose()
-## ✖ lubridate::wday()          masks data.table::wday()
-## ✖ lubridate::week()          masks data.table::week()
-## ✖ lubridate::yday()          masks data.table::yday()
-## ✖ lubridate::year()          masks data.table::year()
-## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 ## Joining with `by = join_by(school)`
 ```
 
@@ -143,24 +27,81 @@ source("~/Documents/GitHub/GaoKaoVer2/main/etl.R")
 source("/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/function.r")
 ```
 
-```
-## Warning: A numeric `legend.position` argument in `theme()` was deprecated in ggplot2 3.5.0.
-## ℹ Please use the `legend.position.inside` argument of `theme()` instead.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
-```
-
 
 ## 热门专业变化趋势分析
-### 哪些专业变多？哪些专业消失？
+### 热门专业，冷门专业
 
 
 ```r
-.tmp <- dt_rank_cmb_rough %>%
+.hot <- dt_rank_cmb_rough %>%
     group_by(year, major) %>%
-    summarise(n = n_distinct(`院校`), .groups = "drop_last") %>%
-    mutate(n_over_total = n/sum(n)) %>% 
-    arrange(desc(n_over_total))
+    summarise(avg_scores = mean(score_by_major_scale, na.rm = TRUE),
+    countn = n()) %>%
+    ungroup() %>% 
+    filter(countn >= 10, year %in% c(2020, 2023)) %>% 
+    arrange(desc(avg_scores)) %>% 
+    group_by(year)  %>% 
+    ggcharts::bar_chart(major, avg_scores, fill = as.factor(year), facet = as.factor(year), top_n = 30) +
+        theme_bw() +
+        theme(text = element_text(family = "Canger", size = 10)) +
+        labs(title = paste0("Popular Majors in Shandong Province"), x = "Majors", y = "Majors Popularity")
+```
+
+```
+## `summarise()` has grouped output by 'year'. You can override using the `.groups`
+## argument.
+```
+
+```r
+print(.hot)
+```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+
+```r
+ggsaveTheme(.hot,
+    mytheme = my_theme,
+    filename = "plot/Figure 0-1.png",
+    width = 12,
+    height = 16,
+    dpi = 300
+)
+
+.cold <- dt_rank_cmb_rough %>%
+    group_by(year, major) %>%
+    summarise(
+        avg_scores = mean(score_by_major_scale, na.rm = TRUE),
+        countn = n()
+    ) %>%
+    ungroup() %>%
+    filter(countn >= 10, year %in% c(2020, 2023)) %>%
+        arrange(avg_scores) %>%
+        group_by(year) %>%
+        ggcharts::bar_chart(major, avg_scores, fill = as.factor(year), facet = as.factor(year), top_n = -30) +
+        theme_bw() +
+        theme(text = element_text(family = "Canger", size = 10)) +
+        labs(title = paste0("Unpopular Majors in Shandong Province"), x = "Majors", y = "Majors Popularity")
+```
+
+```
+## `summarise()` has grouped output by 'year'. You can override using the `.groups`
+## argument.
+```
+
+```r
+print(.cold)
+```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-2.png)
+
+```r
+ggsaveTheme(.cold,
+        mytheme = my_theme,
+        filename = "plot/Figure 0-2.png",
+        width = 12,
+        height = 16,
+        dpi = 300
+    )
 ```
 
 
@@ -193,36 +134,39 @@ head(score_by_major_group_time)
 ```
 ## # A tibble: 6 × 14
 ## # Groups:   year [2]
-##   院校            major frequency rank_by_major rank_by_school  year school city  province
-##   <chr>           <chr>     <dbl>         <dbl>          <dbl> <dbl> <chr>  <chr> <chr>   
-## 1 C928泉州职业技… 油气…        10        260585         256142  2020 泉州…  泉州… 福建省  
-## 2 C928泉州职业技… 汽车…         5        259516         256142  2020 泉州…  泉州… 福建省  
-## 3 C928泉州职业技… 计算…         5        257697         256142  2020 泉州…  泉州… 福建省  
-## 4 C928泉州职业技… 机械…         5        256142         256142  2020 泉州…  泉州… 福建省  
-## 5 D857山东华宇工… 房地…        90        250390         243940  2021 山东…  德州… 山东省  
-## 6 D857山东华宇工… 道路…        45        249705         243940  2021 山东…  德州… 山东省  
+##   院校      major frequency rank_by_major rank_by_school  year school city  province
+##   <chr>     <chr>     <dbl>         <dbl>          <dbl> <dbl> <chr>  <chr> <chr>   
+## 1 C928泉州… 油气…        10        260585         256142  2020 泉州…  泉州… 福建省  
+## 2 C928泉州… 汽车…         5        259516         256142  2020 泉州…  泉州… 福建省  
+## 3 C928泉州… 计算…         5        257697         256142  2020 泉州…  泉州… 福建省  
+## 4 C928泉州… 机械…         5        256142         256142  2020 泉州…  泉州… 福建省  
+## 5 D857山东… 房地…        90        250390         243940  2021 山东…  德州… 山东省  
+## 6 D857山东… 道路…        45        249705         243940  2021 山东…  德州… 山东省  
 ## # ℹ 5 more variables: score_by_major_scale <dbl>, score_by_school_scale <dbl>,
 ## #   major_rough <chr>, score_group <fct>, score_group_school <fct>
 ```
 
 ```r
-generate_plot <- function(time) {
+generate_plot <- function(time, top_n, title) {
     plot <- score_by_major_group_time %>%
         filter(
             score_group %in% c("低分段", "高分段"),
             year == time
         ) %>%
         group_by(score_group, major) %>%
-        summarise(avg_scores = mean(score_by_major_scale, na.rm = TRUE), .groups = "keep") %>%
+        summarise(avg_scores = mean(score_by_major_scale, na.rm = TRUE), 
+        countn = n(), .groups = "keep") %>%
+        filter(countn >= 10)  %>% 
         group_by(score_group) %>%
-        ggcharts::bar_chart(major, avg_scores, fill = score_group, facet = score_group, top_n = 30) +
+        ggcharts::bar_chart(major, avg_scores, fill = score_group, facet = score_group, top_n = top_n) +
         theme_bw() +
         theme(text = element_text(family = "Canger", size = 10)) +
-        labs(title = paste0(time, " Popular Majors in Shandong Province"), x = "Majors", y = "Majors Popularity")
+        labs(title = paste0(time, " ", title), x = "Majors", y = "Majors Popularity")
 }
 # Generate plots
 # 2020
-p1 <- generate_plot(2020)
+p1 <- generate_plot(2020, 30, 
+title = "Popular Majors in Shandong Province")
 print(p1)
 ```
 
@@ -231,13 +175,14 @@ print(p1)
 ```r
 ggsaveTheme(p1,
     mytheme = my_theme,
-    filename = "plot/Figure 1.major_by_score_2020.png",
+    filename = "plot/Figure 1-1.popular_major_by_score_2020.png",
     width = 12,
     height = 16,
     dpi = 300
 )
 # 2023
-p2 <- generate_plot(2023)
+p2 <- generate_plot(2023, 30,
+    title = "Popular Majors in Shandong Province")
 print(p2)
 ```
 
@@ -246,7 +191,41 @@ print(p2)
 ```r
 ggsaveTheme(p2,
     mytheme = my_theme,
-    filename = "plot/Figure 2.major_by_score_2023.png",
+    filename = "plot/Figure 1-2.popular_major_by_score_2023.png",
+    width = 12,
+    height = 16,
+    dpi = 300
+)
+
+p3 <- generate_plot(2020, -30,
+    title = "Unpopular Majors in Shandong Province"
+)
+print(p3)
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-3.png)
+
+```r
+ggsaveTheme(p3,
+    mytheme = my_theme,
+    filename = "plot/Figure 1-3.unpopular_major_by_score_2020.png",
+    width = 12,
+    height = 16,
+    dpi = 300
+)
+# 2023
+p4 <- generate_plot(2023, -30,
+    title = "Unpopular Majors in Shandong Province"
+)
+print(p4)
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-4.png)
+
+```r
+ggsaveTheme(p4,
+    mytheme = my_theme,
+    filename = "plot/Figure 1-4.unpopular_major_by_score_2023.png",
     width = 12,
     height = 16,
     dpi = 300
@@ -318,7 +297,7 @@ print(phl01)
 ```r
 ggsaveTheme(phl01,
     mytheme = my_theme,
-    filename = "plot/Figure 3.high2low.png",
+    filename = "plot/Figure 2-1.high2low.png",
     width = 12,
     height = 16,
     dpi = 300
@@ -344,7 +323,7 @@ print(phl02)
 ```r
 ggsaveTheme(phl02,
     mytheme = my_theme,
-    filename = "plot/Figure 4.low2high.png",
+    filename = "plot/Figure 2-2.low2high.png",
     width = 12,
     height = 16,
     dpi = 300
@@ -453,11 +432,11 @@ head(avg_scores)
 ## # Groups:   major_rough [6]
 ##   major_rough        avg_score
 ##   <chr>                  <dbl>
-## 1 临床医学               4.22 
-## 2 信息管理与图书情报     4.48 
-## 3 公共管理类            -0.646
-## 4 农业类                 5.17 
-## 5 化学类                 2.30 
+## 1 临床医学               4.17 
+## 2 信息管理与图书情报     3.97 
+## 3 公共管理类            -0.662
+## 4 农业类                 4.93 
+## 5 化学类                 2.09 
 ## 6 历史学类               4.88
 ```
 
@@ -490,7 +469,7 @@ print(p)
 ```r
 ggsaveTheme(p,
     mytheme = my_theme_legend,
-    filename = "plot/Figure 5.score_by_major_rough_change.png",
+    filename = "plot/Figure 3-1.score_by_major_rough_change.png",
     width = 16,
     height = 12,
     dpi = 300
@@ -555,14 +534,14 @@ head(dt_school_top_change)
 
 ```
 ## # A tibble: 6 × 12
-##   院校              major province city   countn score_by_major_early score_by_major_later
-##   <chr>             <chr> <chr>    <chr>   <int>                <dbl>                <dbl>
-## 1 D904北京工业大学… 计算… 北京市   北京市      2                 12.5                 75.4
-## 2 D601长春工业大学… 软件… 吉林省   长春市      2                 13.2                 72.6
-## 3 D905南京工业大学… 计算… 江苏省   南京市      2                 25.1                 78.8
-## 4 D991江苏科技大学… 能源… 江苏省   苏州市      2                 22.4                 71.0
-## 5 D897天津理工大学… 数据… 天津市   天津市      2                 19.5                 67.3
-## 6 D897天津理工大学… 软件… 天津市   天津市      2                 20.8                 66.7
+##   院校        major province city   countn score_by_major_early score_by_major_later
+##   <chr>       <chr> <chr>    <chr>   <int>                <dbl>                <dbl>
+## 1 D904北京工… 计算… 北京市   北京市      2                 12.5                 75.4
+## 2 D601长春工… 软件… 吉林省   长春市      2                 13.2                 72.6
+## 3 D905南京工… 计算… 江苏省   南京市      2                 25.1                 78.8
+## 4 D991江苏科… 能源… 江苏省   苏州市      2                 22.4                 71.0
+## 5 D897天津理… 数据… 天津市   天津市      2                 19.5                 67.3
+## 6 D897天津理… 软件… 天津市   天津市      2                 20.8                 66.7
 ## # ℹ 5 more variables: score_by_major_change <dbl>, major_rough <chr>,
 ## #   score_by_school_scale <dbl>, school <chr>, rank <int>
 ```
@@ -580,7 +559,7 @@ p_school_change <- dt_school_top_change %>%
     # scale_x_log10() +
     theme_bw() +
     theme(text = element_text(family = "Canger", size = 10)) +
-    labs(title = "Popularity Changes in Top 50 Universities' Majors, 2020-2023", x = "Δ Popularity", y = "Universities")
+    labs(title = "Popularity Changes in Top 50 Unis' Majors, 2020-2023", x = "Δ Popularity", y = "Universities")
 # save png
 print(p_school_change)
 ```
@@ -590,140 +569,334 @@ print(p_school_change)
 ```r
 ggsaveTheme(p_school_change,
     mytheme = my_theme,
-    filename = "plot/Figure 6.top_uni_change_by_major.png",
+    filename = "plot/Figure 4-1.top_uni_change_by_major.png",
     width = 12,
     height = 16,
     dpi = 300
 )
 
-dt_school_top <- dt_rank_cmb %>%
-    mutate(school = substr(院校, 5, nchar(院校))) %>%
-    filter(year == 2023) %>%
-    mutate(rank = dense_rank(desc(score_by_school_scale))) %>%
-    # filter(rank <= 30) %>%
-    ungroup()
-dt_school_top_change <- score_by_major_rough_change %>%
-    filter(院校 %in% dt_school_top$院校) %>%
-    left_join(unique(select(dt_school_top, 院校, score_by_school_scale, school, rank)),
-        by = "院校"
-    )
-head(dt_school_top_change)
+# # zoom out
+# p_school_change_zoom <- dt_school_top_change %>%
+#     filter(rank <= 50) %>%
+#     ggplot(aes(
+#         x = score_by_major_change,
+#         y = reorder(school, score_by_school_scale),
+#         color = ifelse(score_by_major_change > 0, "#00BA38", "#F8756D")
+#     )) +
+#     geom_point(size = 5, alpha = .5) +
+#     scale_color_identity() +
+#     coord_cartesian(xlim = c(-5, 5)) +
+#     # scale_x_log10() +
+#     theme_bw() +
+#     theme(text = element_text(family = "Canger", size = 10)) +
+#     labs(title = "Popularity Changes in Top 50 Universities' Majors, 2020-2023", x = "Δ Popularity (Zoom out)", y = "Universities")
+# # save png
+# print(p_school_change_zoom)
+# ggsaveTheme(p_school_change_zoom,
+#     mytheme = my_theme,
+#     filename = "plot/Figure 7.top_uni_change_by_major_zoom.png",
+#     width = 12,
+#     height = 16,
+#     dpi = 300
+# )
 ```
 
-```
-## # A tibble: 6 × 12
-##   院校              major province city   countn score_by_major_early score_by_major_later
-##   <chr>             <chr> <chr>    <chr>   <int>                <dbl>                <dbl>
-## 1 D904北京工业大学… 计算… 北京市   北京市      2                 12.5                 75.4
-## 2 D601长春工业大学… 软件… 吉林省   长春市      2                 13.2                 72.6
-## 3 D905南京工业大学… 计算… 江苏省   南京市      2                 25.1                 78.8
-## 4 D991江苏科技大学… 能源… 江苏省   苏州市      2                 22.4                 71.0
-## 5 D897天津理工大学… 数据… 天津市   天津市      2                 19.5                 67.3
-## 6 D897天津理工大学… 软件… 天津市   天津市      2                 20.8                 66.7
-## # ℹ 5 more variables: score_by_major_change <dbl>, major_rough <chr>,
-## #   score_by_school_scale <dbl>, school <chr>, rank <int>
-```
+
+### Top50 cases
+
 
 ```r
-# zoom out
-p_school_change_zoom <- dt_school_top_change %>%
+# Filter out the schools with the most significant changes in major scores.
+.school_major <- dt_school_top_change %>%
+    dplyr::select(school, rank, major, major_rough, score_by_major_change, score_by_school_scale) %>% 
+    mutate(delta = ifelse(score_by_major_change > 0, 1, 0)) %>% 
+    # top50
     filter(rank <= 50) %>%
+    group_by(delta, school)  %>% 
+    mutate(avg_majors_scores = mean(score_by_major_change, na.rm = TRUE))  %>% 
+    ungroup() %>% 
+    # 根据专业变化平均分对院校排序
+    group_by(delta) %>% 
+    mutate(rank_avg = dense_rank(desc(avg_majors_scores))) %>% 
+    ungroup()
+
+# up 5
+ p_up <- .school_major %>% 
+    dplyr::arrange(desc(avg_majors_scores), desc(score_by_major_change)) %>% 
+    filter(delta == 1, 
+    #between(avg_majors_scores, -0.2, 0.2),
+    between(rank_avg, 1, 10)) %>% 
     ggplot(aes(
         x = score_by_major_change,
-        y = reorder(school, score_by_school_scale),
+        y = reorder(school, avg_majors_scores),
         color = ifelse(score_by_major_change > 0, "#00BA38", "#F8756D")
     )) +
-    geom_point(size = 5, alpha = .5) +
-    scale_color_identity() +
-    coord_cartesian(xlim = c(-5, 5)) +
-    # scale_x_log10() +
-    theme_bw() +
-    theme(text = element_text(family = "Canger", size = 10)) +
-    labs(title = "Popularity Changes in Top 50 Universities' Majors, 2020-2023", x = "Δ Popularity (Zoom out)", y = "Universities")
-# save png
-print(p_school_change_zoom)
-```
-
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-2.png)
-
-```r
-ggsaveTheme(p_school_change_zoom,
+        geom_point(size = 5, alpha = .5) +
+        scale_color_identity() +
+        coord_cartesian(xlim = c(0, 8)) +
+        geom_text_repel(aes(
+            label = major
+        ), 
+        #angle = 45,
+        vjust = -0.5,
+        alpha = .7,
+        min.segment.length = Inf,
+        max.overlaps = 20,
+        size = 15,
+        family = "Canger",
+        color = 'black')  +
+        # scale_x_log10() +
+        # coord_flip() +
+        theme_bw() +
+        theme(text = element_text(family = "Canger", size = 10)) +
+        labs(title = "Popularity Changes in Top Unis' Majors, 2020-2023", x = "Δ Popularity (Zoom out)", y = "Universities")
+#print(p_up)
+ggsaveTheme(p_up,
     mytheme = my_theme,
-    filename = "plot/Figure 7.top_uni_change_by_major_zoom.png",
+    filename = "plot/Figure 4-2.up_major_names.png",
     width = 12,
     height = 16,
     dpi = 300
 )
 ```
 
-
-### 名校「冷门」专业对高分考生的吸引力
-
-
-```r
-# 名校冷门专业占比 变化不大
-dt01 <- score_by_major_group_time %>%
-    filter(school %in% project211) %>%
-    dplyr::select(school, major, major_rough, year, city, province, score_group) %>%
-    group_by(year) %>%
-    summarise(
-        fraction01 = round(sum(ifelse(major_rough %in% c("外国语言文学", "环境科学类", "公共管理类", "哲学", "新闻传播学", "建筑学类", "土木工程类", "经济学类", "金融类", "地质学"), 1, 0)) / n(), 3)
-    )
-# 对高分考生的吸引力已经减弱
-dt02 <- score_by_major_group_time %>%
-    filter(
-        major_rough %in% c("外国语言文学", "环境科学类", "公共管理类", "哲学", "新闻传播学", "建筑学类", "土木工程类", "经济学类", "金融类", "地质学"),
-        school %in% project211
-    ) %>%
-    dplyr::select(school, major, major_rough, year, city, province, score_group) %>%
-    group_by(year) %>%
-    summarise(
-        fraction02 = round(sum(ifelse(score_group %in% c("高分段"), 1, 0)) / n(), 3)
-    )
-dt_merge <- left_join(dt01, dt02) %>%
-    mutate(fraction02_plot = fraction01 * fraction02)
 ```
-
-```
-## Joining with `by = join_by(year)`
+## Warning: ggrepel: 2 unlabeled data points (too many overlaps). Consider increasing
+## max.overlaps
 ```
 
 ```r
-real_value <- c(dt_merge$fraction01, dt_merge$fraction02)
-# plot dt_merge as barplot
-dp1 <- dt_merge %>%
-    gather(key = "variable", value = "value", -year) %>%
-    filter(variable %in% c("fraction01", "fraction02_plot")) %>%
-    data.frame(value2 = as.character(formattable::percent(real_value))) %>%
-    mutate(
-        value = formattable::percent(value),
-        value2 = ifelse(variable == "fraction02_plot", paste0(value2, " in majs."), value2)
-    ) %>%
-    ggplot(aes(x = year, y = value, fill = variable)) +
-    geom_bar(stat = "identity", position = position_dodge()) +
-    geom_text(aes(label = value2), position = position_dodge(width = 0.9), vjust = -0.25) +
-    scale_fill_manual("", values = c("#016FBC", "#E8BA00"), labels = c("fraction01" = "% of Unpop. Majs.", "fraction02_plot" = "% of High-Scoring Majs. in Unpop. Majs.")) +
-    theme_bw() +
-    theme(
-        text = element_text(family = "Canger", size = 10),
-        legend.position = "bottom"
-    ) +
-    labs(title = "% of Unpopular Majors in 985 & 211 Univs.", x = "Year", y = "Percentage %", fill = "Variable")
+# down 5
+ p_down <- .school_major %>%
+     arrange(avg_majors_scores, score_by_major_change) %>% 
+     filter(delta == 0, 
+     #between(avg_majors_scores, -0.2, 0.2),
+     between(rank_avg, length(unique(.school_major$rank_avg))-9, length(unique(.school_major$rank_avg)))) %>%
+     ggplot(aes(
+        x = score_by_major_change,
+        y = reorder(school, avg_majors_scores),
+        color = ifelse(score_by_major_change > 0, "#00BA38", "#F8756D")
+    )) +
+        geom_point(size = 5, alpha = .5) +
+        scale_color_identity() +
+        coord_cartesian(xlim = c(-10, 0)) +
+        geom_text_repel(
+            aes(
+                label = major
+            ),
+            min.segment.length = Inf,
+            max.overlaps = 20,
+            size = 15,
+            family = "Canger",
+            color = "black",
+            #angle = 45,
+            vjust = -0.5,
+        alpha = .7
+        ) +
+        # scale_x_log10() +
+        #coord_flip() +
+        theme_bw() +
+        theme(text = element_text(family = "Canger", size = 10)) +
+        labs(title = "Popularity Changes in Top Unis' Majors, 2020-2023", x = "Δ Popularity (Zoom out)", y = "Universities")
+#print(p_down)
+ggsaveTheme(p_down,
+    mytheme = my_theme,
+    filename = "plot/Figure 4-3.down_major_names.png",
+    width = 12,
+    height = 16,
+    dpi = 300
+)
+```
 
-print(dp1)
+```
+## Warning: ggrepel: 13 unlabeled data points (too many overlaps). Consider increasing
+## max.overlaps
+```
+
+```r
+#! comment for more details
+ p_up2 <- .school_major %>%
+     dplyr::arrange(desc(avg_majors_scores), desc(score_by_major_change)) %>%
+     filter(delta == 1) %>%
+     ggplot(aes(
+         x = score_by_major_change,
+         y = reorder(school, avg_majors_scores),
+         color = ifelse(score_by_major_change > 0, "#00BA38", "#F8756D")
+     )) +
+     geom_point(size = 5, alpha = .5) +
+     scale_color_identity() +
+     coord_cartesian(xlim = c(0, 8)) +
+     geom_text_repel(
+         aes(
+             label = major
+         ),
+         # angle = 45,
+         vjust = -0.5,
+         alpha = .7,
+         min.segment.length = Inf,
+         max.overlaps = 15,
+         size = 7,
+         family = "Canger",
+         color = "black"
+     ) +
+     # scale_x_log10() +
+     # coord_flip() +
+     theme_bw() +
+     theme(text = element_text(family = "Canger", size = 10)) +
+     labs(title = "Popularity Changes in Top Unis' Majors, 2020-2023", x = "Δ Popularity (Zoom out)", y = "Universities")
+ print(p_up2)
+```
+
+```
+## Warning: ggrepel: 153 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps
 ```
 
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
 
 ```r
-dp1 <- dp1 +
-    geom_text(aes(label = value2), position = position_dodge(width = 0.9), vjust = -0.25, size = 25)
-ggsaveTheme(dp1,
-    mytheme = my_theme_legend_define,
-    filename = "plot/Figure 8.percentage of unpopular majors in univs.png",
-    width = 16,
-    height = 12,
-    dpi = 300
-)
+ ggsaveTheme(p_up2,
+     mytheme = my_theme,
+     filename = "plot/Figure 4-4.png",
+     width = 12,
+     height = 20,
+     dpi = 300
+ )
+```
+
+```
+## Warning: ggrepel: 63 unlabeled data points (too many overlaps). Consider increasing
+## max.overlaps
+```
+
+```r
+ p_down2 <- .school_major %>%
+     arrange(avg_majors_scores, score_by_major_change) %>%
+     filter(delta == 0) %>%
+     ggplot(aes(
+         x = score_by_major_change,
+         y = reorder(school, avg_majors_scores),
+         color = ifelse(score_by_major_change > 0, "#00BA38", "#F8756D")
+     )) +
+     geom_point(size = 5, alpha = .5) +
+     scale_color_identity() +
+     coord_cartesian(xlim = c(-5, 0)) +
+     geom_text_repel(
+         aes(
+             label = major
+         ),
+         min.segment.length = Inf,
+         max.overlaps = 15,
+         size = 7,
+         family = "Canger",
+         color = "black",
+         # angle = 45,
+         vjust = -0.5,
+         alpha = .7
+     ) +
+     # scale_x_log10() +
+     # coord_flip() +
+     theme_bw() +
+     theme(text = element_text(family = "Canger", size = 10)) +
+     labs(title = "Popularity Changes in Top Unis' Majors, 2020-2023", x = "Δ Popularity (Zoom out)", y = "Universities")
+ print(p_down2)
+```
+
+```
+## Warning: ggrepel: 224 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps
+```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-2.png)
+
+```r
+ ggsaveTheme(p_down2,
+     mytheme = my_theme,
+     filename = "plot/Figure 4-5.png",
+     width = 12,
+     height = 20,
+     dpi = 300
+ )
+```
+
+```
+## Warning: ggrepel: 22 unlabeled data points (too many overlaps). Consider increasing
+## max.overlaps
+```
+
+```r
+# #'
+# #' ### 名校「冷门」专业对高分考生的吸引力
+
+# # 名校冷门专业占比 变化不大
+# dt01 <- score_by_major_group_time %>%
+#     filter(school %in% project211) %>%
+#     dplyr::select(school, major, major_rough, year, city, province, score_group) %>%
+#     group_by(year) %>%
+#     summarise(
+#         fraction01 = round(sum(ifelse(major_rough %in% c("外国语言文学", "环境科学类", "公共管理类", "哲学", "新闻传播学", "建筑学类", "土木工程类", "经济学类", "金融类", "地质学"), 1, 0)) / n(), 3)
+#     )
+# # 对高分考生的吸引力已经减弱
+# dt02 <- score_by_major_group_time %>%
+#     filter(
+#         major_rough %in% c("外国语言文学", "环境科学类", "公共管理类", "哲学", "新闻传播学", "建筑学类", "土木工程类", "经济学类", "金融类", "地质学"),
+#         school %in% project211
+#     ) %>%
+#     dplyr::select(school, major, major_rough, year, city, province, score_group) %>%
+#     group_by(year) %>%
+#     summarise(
+#         fraction02 = round(sum(ifelse(score_group %in% c("高分段"), 1, 0)) / n(), 3)
+#     )
+# dt_merge <- left_join(dt01, dt02) %>%
+#     mutate(fraction02_plot = fraction01 * fraction02)
+# real_value <- c(dt_merge$fraction01, dt_merge$fraction02)
+# # plot dt_merge as barplot
+# dp1 <- dt_merge %>%
+#     gather(key = "variable", value = "value", -year) %>%
+#     filter(variable %in% c("fraction01", "fraction02_plot")) %>%
+#     data.frame(value2 = as.character(formattable::percent(real_value))) %>%
+#     mutate(
+#         value = formattable::percent(value),
+#         value2 = ifelse(variable == "fraction02_plot", paste0(value2, " in majs."), value2)
+#     ) %>%
+#     ggplot(aes(x = year, y = value, fill = variable)) +
+#     geom_bar(stat = "identity", position = position_dodge()) +
+#     geom_text(aes(label = value2), position = position_dodge(width = 0.9), vjust = -0.25) +
+#     scale_fill_manual("", values = c("#016FBC", "#E8BA00"), labels = c("fraction01" = "% of Unpop. Majs.", "fraction02_plot" = "% of High-Scoring Majs. in Unpop. Majs.")) +
+#     theme_bw() +
+#     theme(
+#         text = element_text(family = "Canger", size = 10),
+#         legend.position = "bottom"
+#     ) +
+#     labs(title = "% of Unpopular Majors in 985 & 211 Univs.", x = "Year", y = "Percentage %", fill = "Variable")
+
+# print(dp1)
+# dp1 <- dt_merge %>%
+#     gather(key = "variable", value = "value", -year) %>%
+#     filter(variable %in% c("fraction01", "fraction02_plot")) %>%
+#     data.frame(value2 = as.character(formattable::percent(real_value))) %>%
+#     mutate(
+#         value = formattable::percent(value),
+#         value2 = ifelse(variable == "fraction02_plot", paste0(value2, " in majs."), value2)
+#     ) %>%
+#     ggplot(aes(x = year, y = value, fill = variable)) +
+#     geom_bar(stat = "identity", position = position_dodge()) +
+#     #geom_text(aes(label = value2), position = position_dodge(width = 0.9), vjust = -0.25) +
+#     scale_fill_manual("", values = c("#016FBC", "#E8BA00"), labels = c("fraction01" = "% of Unpop. Majs.", "fraction02_plot" = "% of High-Scoring Majs. in Unpop. Majs.")) +
+#     theme_bw() +
+#     theme(
+#         text = element_text(family = "Canger", size = 10),
+#         legend.position = "bottom"
+#     ) +
+#     labs(title = "% of Unpopular Majors in 985 & 211 Univs.", x = "Year", y = "Percentage %", fill = "Variable")
+#  +
+#     geom_text(aes(label = value2), position = position_dodge(width = 0.9), vjust = -0.25, size = 25)
+# ggsaveTheme(dp1,
+#     mytheme = my_theme_legend_define,
+#     filename = "plot/Figure 5.percentage of unpopular majors in univs.png",
+#     width = 16,
+#     height = 12,
+#     dpi = 300
+# )
 ```
 
