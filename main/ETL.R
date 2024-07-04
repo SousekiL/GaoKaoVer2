@@ -17,6 +17,7 @@ library(ggbreak)
 library(plotly)
 library(ggpubr)
 library(tidyverse)
+library(ggrepel)
 font_add("Canger", "/Library/Fonts/仓耳今楷01-W04.ttf")
 font_families()
 showtext_auto()  # 全局自动使用
@@ -27,7 +28,6 @@ setwd('/Users/sousekilyu/Documents/GitHub/GaoKaoVer2')
 # This code defines two vectors: .noun and .major.
 .majorList <- list(
   c("新闻|传播", "新闻传播学"),
-  #c("翻译|外语|外国语|.*?语$", "外国语言文学"),
   c("法学|法律", "法学"),
   c("计算机", "计算机类"),
   c("软件", "软件工程"),
@@ -36,7 +36,6 @@ setwd('/Users/sousekilyu/Documents/GitHub/GaoKaoVer2')
   c("自然保护与环境生态|环境生态", "环境生态类"),
   c("轨道交通电气与控制", "轨道交通电气类"),
   c("旅游管理", "旅游管理")
-  #c("林学|林业|草|动物|水产", "农学类")
 )
 majorData <- .majorList %>%
   data.frame() %>%
@@ -66,8 +65,8 @@ row.names(majorData) <- NULL
   c("通信", "通信类"),
   c("电子", "电子类"),
   c("机械", "机械类"),
-  c("计算机", "计算机类"),
-  c("人工智能", "计算机类(人工智能)"),
+  c("计算机|人工智能", "计算机类"),
+  #c("人工智能", "计算机类(人工智能)"),
   c("软件", "软件工程"),
   c("土木", "土木工程类"),
   c("^统计学$|应用统计|经济统计", "统计学类"),
@@ -84,12 +83,6 @@ row.names(majorData) <- NULL
   c("林学|林业|草|动物|水产|农业", "农业类"),
   c("信息管理|档案|图书", "信息管理与图书情报"),
   c("地球|地质", "地质学")
-  # c("地理|地理信息", "地理信息科学"),
-  # c("物理|天文", "物理和天文学"),
-  # c("海洋", "海洋科学"),
-  # c("文科实验|文科试验|社会科学实验|社会科学试验|社科试验|社科实验", "文社科试验班"),
-  # c("理科实验|理科试验", "理科试验班"),
-  # c("工科实验|工科试验", "工科试验班")
 )
 majorData_rough <- .majorList2 %>%
   data.frame() %>%
@@ -98,6 +91,7 @@ majorData_rough <- .majorList2 %>%
   setNames(c("noun", "major"))
 row.names(majorData_rough) <- NULL
 
+# read data
 ## function to elt the web data
 read_and_process_data <- function(year) {
   filepath <- paste0("data/", year, "年山东省普通一批投档线.xlsx")
@@ -105,8 +99,9 @@ read_and_process_data <- function(year) {
   dt <- read_excel(filepath)
   colnames(dt) <- c("专业", "院校", "计划数", "位次")
   
+  # include 中外合作
   dt %<>%
-    dplyr::filter(!grepl("定向|中外合作|预科", 专业))
+    dplyr::filter(!grepl("定向|预科", 专业))
   
   dt$院校 %<>%
     str_replace_all("\\（.*?\\）", "") %>%

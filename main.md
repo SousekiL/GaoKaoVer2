@@ -20,11 +20,134 @@ source("~/Documents/GitHub/GaoKaoVer2/main/etl.R")
 ```
 
 ```
+## data.table 1.14.8 using 1 threads (see ?getDTthreads).  Latest news: r-datatable.com
+```
+
+```
+## **********
+## This installation of data.table has not detected OpenMP support. It should still work but in single-threaded mode.
+## This is a Mac. Please read https://mac.r-project.org/openmp/. Please engage with Apple and ask them for support. Check r-datatable.com for updates, and our Mac instructions here: https://github.com/Rdatatable/data.table/wiki/Installation. After several years of many reports of installation problems on Mac, it's time to gingerly point out that there have been no similar problems on Windows or Linux.
+## **********
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:data.table':
+## 
+##     between, first, last
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```
+## Loading required package: RColorBrewer
+```
+
+```
+## Loading required package: sysfonts
+```
+
+```
+## Loading required package: showtextdb
+```
+
+```
+## 
+## Attaching package: 'ggstance'
+```
+
+```
+## The following objects are masked from 'package:ggplot2':
+## 
+##     geom_errorbarh, GeomErrorbarh
+```
+
+```
+## ggbreak v0.1.2
+## 
+## If you use ggbreak in published research, please cite the following paper:
+## 
+## S Xu, M Chen, T Feng, L Zhan, L Zhou, G Yu. Use ggbreak to effectively utilize
+## plotting space to deal with large datasets and outliers. Frontiers in Genetics.
+## 2021, 12:774846. doi: 10.3389/fgene.2021.774846
+```
+
+```
+## 
+## Attaching package: 'plotly'
+```
+
+```
+## The following object is masked from 'package:ggplot2':
+## 
+##     last_plot
+```
+
+```
+## The following object is masked from 'package:stats':
+## 
+##     filter
+```
+
+```
+## The following object is masked from 'package:graphics':
+## 
+##     layout
+```
+
+```
+## ── Attaching core tidyverse packages ────────────────────────────────── tidyverse 2.0.0 ──
+## ✔ forcats   1.0.0     ✔ readr     2.1.4
+## ✔ lubridate 1.9.2     ✔ tibble    3.2.1
+## ✔ purrr     1.0.2     ✔ tidyr     1.3.0
+## ── Conflicts ──────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::between()           masks data.table::between()
+## ✖ tidyr::extract()           masks magrittr::extract()
+## ✖ plotly::filter()           masks dplyr::filter(), stats::filter()
+## ✖ dplyr::first()             masks data.table::first()
+## ✖ ggstance::geom_errorbarh() masks ggplot2::geom_errorbarh()
+## ✖ lubridate::hour()          masks data.table::hour()
+## ✖ lubridate::isoweek()       masks data.table::isoweek()
+## ✖ dplyr::lag()               masks stats::lag()
+## ✖ dplyr::last()              masks data.table::last()
+## ✖ lubridate::mday()          masks data.table::mday()
+## ✖ lubridate::minute()        masks data.table::minute()
+## ✖ lubridate::month()         masks data.table::month()
+## ✖ lubridate::quarter()       masks data.table::quarter()
+## ✖ lubridate::second()        masks data.table::second()
+## ✖ purrr::set_names()         masks magrittr::set_names()
+## ✖ purrr::transpose()         masks data.table::transpose()
+## ✖ lubridate::wday()          masks data.table::wday()
+## ✖ lubridate::week()          masks data.table::week()
+## ✖ lubridate::yday()          masks data.table::yday()
+## ✖ lubridate::year()          masks data.table::year()
+## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 ## Joining with `by = join_by(school)`
 ```
 
 ```r
 source("/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/function.r")
+```
+
+```
+## Warning: A numeric `legend.position` argument in `theme()` was deprecated in ggplot2 3.5.0.
+## ℹ Please use the `legend.position.inside` argument of `theme()` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 ```
 
 
@@ -135,6 +258,7 @@ ggsaveTheme(p2,
 
 
 ```r
+## 所有高校
 # (中)高分段=>(中)低分段
 high2low <- score_by_major_group_time %>%
     filter((year == 2020 & score_group %in% c("高分段", "中高分段")) |
@@ -225,6 +349,89 @@ ggsaveTheme(phl02,
     height = 16,
     dpi = 300
 )
+# ## 985&211
+# # (中)高分段=>(中)低分段
+# high2low <- score_by_major_group_time %>%
+#     filter(school %in% project211) %>% 
+#     filter((year == 2020 & score_group %in% c("高分段", "中高分段")) |
+#         (year == 2023 & score_group %in% c("低分段", "中低分段"))) %>%
+#     dplyr::select(院校, major, major_rough, year, score_by_major_scale) %>%
+#     group_by(院校, major, major_rough) %>%
+#     arrange(year) %>%
+#     summarise(
+#         countn = n(),
+#         score_by_major_early = first(score_by_major_scale),
+#         score_by_major_later = last(score_by_major_scale),
+#         score_by_major_change = score_by_major_later - score_by_major_early,
+#         .groups = "drop"
+#     ) %>%
+#     filter(countn == 2) %>%
+#     arrange(score_by_major_change) %>%
+#     mutate(school_major = paste0(substr(院校, 5, nchar(院校)), "+", major)) %>%
+#     filter(!is.na(school_major))
+
+# # 高分段=>(中)低分段
+# low2high <- score_by_major_group_time %>%
+#     filter(school %in% project211) %>% 
+#     filter((year == 2020 & score_group %in% c("低分段", "中低分段")) |
+#         (year == 2023 & score_group %in% c("高分段", "中高分段"))) %>%
+#     dplyr::select(院校, major, major_rough, year, score_by_major_scale) %>%
+#     group_by(院校, major, major_rough) %>%
+#     arrange(year) %>%
+#     summarise(
+#         countn = n(),
+#         score_by_major_early = first(score_by_major_scale),
+#         score_by_major_later = last(score_by_major_scale),
+#         score_by_major_change = score_by_major_later - score_by_major_early,
+#         .groups = "drop"
+#     ) %>%
+#     filter(countn == 2) %>%
+#     arrange(desc(score_by_major_change)) %>%
+#     mutate(school_major = paste0(substr(院校, 5, nchar(院校)), "+", major)) %>%
+#     filter(!is.na(school_major))
+# # plot: https://www.r-bloggers.com/2017/06/bar-plots-and-modern-alternatives/
+# phl01 <- high2low[1:30, ] %>%
+#     ggdotchart(
+#         x = "school_major", y = "score_by_major_change",
+#         color = "#F8756D",
+#         sorting = "descending",
+#         add = "segments",
+#         dot.size = 6,
+#         ggtheme = theme_pubr()
+#     ) +
+#     rotate() +
+#     # theme_bw() +
+#     theme(text = element_text(family = "Canger", size = 10)) +
+#     labs(title = "Majors from High to Low Scores Level", x = "Universities / Majors", y = "Δ Popularity")
+# print(phl01)
+# ggsaveTheme(phl01,
+#     mytheme = my_theme,
+#     filename = "plot/Figure 3-2.211_high2low.png",
+#     width = 12,
+#     height = 16,
+#     dpi = 300
+# )
+# phl02 <- low2high[1:30, ] %>%
+#     ggdotchart(
+#         x = "school_major", y = "score_by_major_change",
+#         color = "#00BA38",
+#         sorting = "ascending",
+#         add = "segments",
+#         dot.size = 6,
+#         ggtheme = theme_pubr()
+#     ) +
+#     rotate() +
+#     # theme_bw() +
+#     theme(text = element_text(family = "Canger", size = 10)) +
+#     labs(title = "Majors from Low to High Scores Level", x = "School / Major", y = "Δ Popularity")
+# print(phl02)
+# ggsaveTheme(phl02,
+#     mytheme = my_theme,
+#     filename = "plot/Figure 4-2.211_low2high.png",
+#     width = 12,
+#     height = 16,
+#     dpi = 300
+# )
 ```
 
 
@@ -331,7 +538,7 @@ ggsaveTheme(p,
 
 
 ```r
-# !!! 考虑到学校最低分收到专业极大影响，院校位次分数根据中位数排名，而非最低位次
+# !考虑到学校最低分收到专业极大影响，院校位次分数根据中位数排名，而非最低位次
 dt_school_top <- dt_rank_cmb %>%
     mutate(school = substr(院校, 5, nchar(院校))) %>%
     filter(year == 2023) %>%
