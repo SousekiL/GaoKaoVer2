@@ -9,10 +9,10 @@ The analysis involved standardizing the admission scores of different majors wit
 
 **Conclusions**
 
-	1.	Popular majors for lower-ranking students remained relatively stable, while those for higher-ranking students changed significantly.
-	2.	From 2020 to 2023, the popularity of lesser-known language majors decreased, while computer science, software engineering, and electronic information majors increased in popularity.
-	3.	Top universities showed stable changes in major popularity, while mid-tier universities experienced significant shifts.
-	4.	Many majors at Xiamen University saw a significant rise in popularity, while majors at Central South University and Beijing Foreign Studies University showed a notable decline.
+1.	Popular majors for lower-ranking students remained relatively stable, while those for higher-ranking students changed significantly.
+2.	From 2020 to 2023, the popularity of lesser-known language majors decreased, while computer science, software engineering, and electronic information majors increased in popularity.
+3.	Top universities showed stable changes in major popularity, while mid-tier universities experienced significant shifts.
+4.	Many majors at Xiamen University saw a significant rise in popularity, while majors at Central South University and Beijing Foreign Studies University showed a notable decline.
 
 ![](figure/unnamed-chunk-6-1.png)
 
