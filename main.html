@@ -118,8 +118,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">"Canger"</span>, <span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Popular Majors in Shandong Province"</span>), <span class="at">x =</span> <span class="st">"Majors"</span>, <span class="at">y =</span> <span class="st">"Majors Popularity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## `summarise()` has grouped output by 'year'. You can override using the `.groups`
-## argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by 'year'. You can override using the `.groups` argument.</code></pre>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(.hot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -149,8 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">"Canger"</span>, <span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Unpopular Majors in Shandong Province"</span>), <span class="at">x =</span> <span class="st">"Majors"</span>, <span class="at">y =</span> <span class="st">"Majors Popularity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## `summarise()` has grouped output by 'year'. You can override using the `.groups`
-## argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by 'year'. You can override using the `.groups` argument.</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(.cold)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -192,16 +190,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(score_by_major_group_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <pre><code>## # A tibble: 6 × 14
 ## # Groups:   year [2]
-##   院校      major frequency rank_by_major rank_by_school  year school city  province
-##   &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;   
-## 1 C928泉州… 油气…        10        260585         256142  2020 泉州…  泉州… 福建省  
-## 2 C928泉州… 汽车…         5        259516         256142  2020 泉州…  泉州… 福建省  
-## 3 C928泉州… 计算…         5        257697         256142  2020 泉州…  泉州… 福建省  
-## 4 C928泉州… 机械…         5        256142         256142  2020 泉州…  泉州… 福建省  
-## 5 D857山东… 房地…        90        250390         243940  2021 山东…  德州… 山东省  
-## 6 D857山东… 道路…        45        249705         243940  2021 山东…  德州… 山东省  
-## # ℹ 5 more variables: score_by_major_scale &lt;dbl&gt;, score_by_school_scale &lt;dbl&gt;,
-## #   major_rough &lt;chr&gt;, score_group &lt;fct&gt;, score_group_school &lt;fct&gt;</code></pre>
+##   院校    major frequency rank_by_major rank_by_school  year school  city  province score_by_major_scale score_by_school_scale major_rough score_group
+##   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;                   &lt;dbl&gt;                 &lt;dbl&gt; &lt;chr&gt;       &lt;fct&gt;      
+## 1 C928泉… 油气…        10        260585         256142  2020 泉州职… 泉州… 福建省                   1.19                     0 油气储运工… 低分段     
+## 2 C928泉… 汽车…         5        259516         256142  2020 泉州职… 泉州… 福建省                   1.60                     0 汽车服务工… 低分段     
+## 3 C928泉… 计算…         5        257697         256142  2020 泉州职… 泉州… 福建省                   2.29                     0 计算机类    低分段     
+## 4 C928泉… 机械…         5        256142         256142  2020 泉州职… 泉州… 福建省                   2.88                     0 机械类      低分段     
+## 5 D857山… 房地…        90        250390         243940  2021 山东华… 德州… 山东省                   3.15                     0 房地产开发… 低分段     
+## 6 D857山… 道路…        45        249705         243940  2021 山东华… 德州… 山东省                   3.41                     0 道路桥梁与… 低分段     
+## # ℹ 1 more variable: score_group_school &lt;fct&gt;</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>generate_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(time, top_n, title) {</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    plot <span class="ot">&lt;-</span> score_by_major_group_time <span class="sc">%&gt;%</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(</span>
@@ -558,8 +555,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="co">#         fraction = round(sum(ifelse(major_rough %in% c("软件工程", "电气类", "汉语言", "计算机类", "通信类"), 1, 0)) / n(), 3)</span></span>
 <span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="co">#     )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="重点高校专业热度变化-高分段学校的低分段专业同理" class="level3">
-<h3 class="anchored" data-anchor-id="重点高校专业热度变化-高分段学校的低分段专业同理">重点高校专业热度变化 / 高分段学校的低分段专业，同理</h3>
+<section id="重点高校专业热度变化-高分段学校的低分段专业同" class="level3">
+<h3 class="anchored" data-anchor-id="重点高校专业热度变化-高分段学校的低分段专业同">重点高校专业热度变化 / 高分段学校的低分段专业，同</h3>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># !考虑到学校最低分收到专业极大影响，院校位次分数根据中位数排名，而非最低位次</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>dt_school_top <span class="ot">&lt;-</span> dt_rank_cmb <span class="sc">%&gt;%</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">school =</span> <span class="fu">substr</span>(院校, <span class="dv">5</span>, <span class="fu">nchar</span>(院校))) <span class="sc">%&gt;%</span></span>
@@ -574,16 +571,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dt_school_top_change)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <pre><code>## # A tibble: 6 × 12
-##   院校        major province city   countn score_by_major_early score_by_major_later
-##   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;int&gt;                &lt;dbl&gt;                &lt;dbl&gt;
-## 1 D904北京工… 计算… 北京市   北京市      2                 12.5                 75.4
-## 2 D601长春工… 软件… 吉林省   长春市      2                 13.2                 72.6
-## 3 D905南京工… 计算… 江苏省   南京市      2                 25.1                 78.8
-## 4 D991江苏科… 能源… 江苏省   苏州市      2                 22.4                 71.0
-## 5 D897天津理… 数据… 天津市   天津市      2                 19.5                 67.3
-## 6 D897天津理… 软件… 天津市   天津市      2                 20.8                 66.7
-## # ℹ 5 more variables: score_by_major_change &lt;dbl&gt;, major_rough &lt;chr&gt;,
-## #   score_by_school_scale &lt;dbl&gt;, school &lt;chr&gt;, rank &lt;int&gt;</code></pre>
+##   院校      major province city  countn score_by_major_early score_by_major_later score_by_major_change major_rough score_by_school_scale school  rank
+##   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt;                &lt;dbl&gt;                &lt;dbl&gt;                 &lt;dbl&gt; &lt;chr&gt;                       &lt;dbl&gt; &lt;chr&gt;  &lt;int&gt;
+## 1 D904北京… 计算… 北京市   北京…      2                 12.5                 75.4                  63.0 计算机类                     31.8 北京…    685
+## 2 D601长春… 软件… 吉林省   长春…      2                 13.2                 72.6                  59.4 软件工程                     12.9 长春…    970
+## 3 D905南京… 计算… 江苏省   南京…      2                 25.1                 78.8                  53.7 计算机类                     19.2 南京…    870
+## 4 D991江苏… 能源… 江苏省   苏州…      2                 22.4                 71.0                  48.6 能源与动力…                  32.1 江苏…    682
+## 5 D897天津… 数据… 天津市   天津…      2                 19.5                 67.3                  47.8 数据科学与…                  19.4 天津…    868
+## 6 D897天津… 软件… 天津市   天津…      2                 20.8                 66.7                  45.9 软件工程                     19.4 天津…    868</code></pre>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>p_school_change <span class="ot">&lt;-</span> dt_school_top_change <span class="sc">%&gt;%</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(rank <span class="sc">&lt;=</span> <span class="dv">50</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(</span>
@@ -692,8 +687,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">16</span>,</span>
 <span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">dpi =</span> <span class="dv">300</span></span>
 <span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## Warning: ggrepel: 2 unlabeled data points (too many overlaps). Consider increasing
-## max.overlaps</code></pre>
+<pre><code>## Warning: ggrepel: 2 unlabeled data points (too many overlaps). Consider increasing max.overlaps</code></pre>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># down 5</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a> p_down <span class="ot">&lt;-</span> .school_major <span class="sc">%&gt;%</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">arrange</span>(avg_majors_scores, score_by_major_change) <span class="sc">%&gt;%</span> </span>
@@ -734,8 +728,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">16</span>,</span>
 <span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">dpi =</span> <span class="dv">300</span></span>
 <span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## Warning: ggrepel: 13 unlabeled data points (too many overlaps). Consider increasing
-## max.overlaps</code></pre>
+<pre><code>## Warning: ggrepel: 13 unlabeled data points (too many overlaps). Consider increasing max.overlaps</code></pre>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! comment for more details</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a> p_up2 <span class="ot">&lt;-</span> .school_major <span class="sc">%&gt;%</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>     dplyr<span class="sc">::</span><span class="fu">arrange</span>(<span class="fu">desc</span>(avg_majors_scores), <span class="fu">desc</span>(score_by_major_change)) <span class="sc">%&gt;%</span></span>
@@ -767,8 +760,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>     <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">"Canger"</span>, <span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
 <span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>     <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Popularity Changes in Top Unis' Majors, 2020-2023"</span>, <span class="at">x =</span> <span class="st">"Δ Popularity (Zoom out)"</span>, <span class="at">y =</span> <span class="st">"Universities"</span>)</span>
 <span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(p_up2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## Warning: ggrepel: 153 unlabeled data points (too many overlaps). Consider
-## increasing max.overlaps</code></pre>
+<pre><code>## Warning: ggrepel: 153 unlabeled data points (too many overlaps). Consider increasing max.overlaps</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="figure/unnamed-chunk-9-1.png" class="img-fluid figure-img"></p>
@@ -782,8 +774,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">height =</span> <span class="dv">20</span>,</span>
 <span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">dpi =</span> <span class="dv">300</span></span>
 <span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## Warning: ggrepel: 63 unlabeled data points (too many overlaps). Consider increasing
-## max.overlaps</code></pre>
+<pre><code>## Warning: ggrepel: 63 unlabeled data points (too many overlaps). Consider increasing max.overlaps</code></pre>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a> p_down2 <span class="ot">&lt;-</span> .school_major <span class="sc">%&gt;%</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>     <span class="fu">arrange</span>(avg_majors_scores, score_by_major_change) <span class="sc">%&gt;%</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">filter</span>(delta <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
@@ -814,8 +805,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>     <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">"Canger"</span>, <span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
 <span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>     <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Popularity Changes in Top Unis' Majors, 2020-2023"</span>, <span class="at">x =</span> <span class="st">"Δ Popularity (Zoom out)"</span>, <span class="at">y =</span> <span class="st">"Universities"</span>)</span>
 <span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(p_down2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## Warning: ggrepel: 224 unlabeled data points (too many overlaps). Consider
-## increasing max.overlaps</code></pre>
+<pre><code>## Warning: ggrepel: 224 unlabeled data points (too many overlaps). Consider increasing max.overlaps</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="figure/unnamed-chunk-9-2.png" class="img-fluid figure-img"></p>
@@ -829,8 +819,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">height =</span> <span class="dv">20</span>,</span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">dpi =</span> <span class="dv">300</span></span>
 <span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## Warning: ggrepel: 22 unlabeled data points (too many overlaps). Consider increasing
-## max.overlaps</code></pre>
+<pre><code>## Warning: ggrepel: 22 unlabeled data points (too many overlaps). Consider increasing max.overlaps</code></pre>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># #'</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co"># #' </span><span class="al">###</span><span class="co"> 名校「冷门」专业对高分考生的吸引力</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>

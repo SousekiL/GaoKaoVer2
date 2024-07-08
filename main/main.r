@@ -12,6 +12,7 @@ knitr::opts_knit$set(root.dir = "/Users/sousekilyu/Documents/GitHub/GaoKaoVer2")
 source("~/Documents/GitHub/GaoKaoVer2/main/etl.R")
 source("/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/function.r")
 
+
 #' 
 #' ## 热门专业变化趋势分析
 #' ### 热门专业，冷门专业

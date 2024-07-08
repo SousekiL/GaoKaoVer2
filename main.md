@@ -48,8 +48,7 @@ source("/Users/sousekilyu/Documents/GitHub/GaoKaoVer2/main/function.r")
 ```
 
 ```
-## `summarise()` has grouped output by 'year'. You can override using the `.groups`
-## argument.
+## `summarise()` has grouped output by 'year'. You can override using the `.groups` argument.
 ```
 
 ```r
@@ -84,8 +83,7 @@ ggsaveTheme(.hot,
 ```
 
 ```
-## `summarise()` has grouped output by 'year'. You can override using the `.groups`
-## argument.
+## `summarise()` has grouped output by 'year'. You can override using the `.groups` argument.
 ```
 
 ```r
@@ -134,16 +132,15 @@ head(score_by_major_group_time)
 ```
 ## # A tibble: 6 × 14
 ## # Groups:   year [2]
-##   院校      major frequency rank_by_major rank_by_school  year school city  province
-##   <chr>     <chr>     <dbl>         <dbl>          <dbl> <dbl> <chr>  <chr> <chr>   
-## 1 C928泉州… 油气…        10        260585         256142  2020 泉州…  泉州… 福建省  
-## 2 C928泉州… 汽车…         5        259516         256142  2020 泉州…  泉州… 福建省  
-## 3 C928泉州… 计算…         5        257697         256142  2020 泉州…  泉州… 福建省  
-## 4 C928泉州… 机械…         5        256142         256142  2020 泉州…  泉州… 福建省  
-## 5 D857山东… 房地…        90        250390         243940  2021 山东…  德州… 山东省  
-## 6 D857山东… 道路…        45        249705         243940  2021 山东…  德州… 山东省  
-## # ℹ 5 more variables: score_by_major_scale <dbl>, score_by_school_scale <dbl>,
-## #   major_rough <chr>, score_group <fct>, score_group_school <fct>
+##   院校    major frequency rank_by_major rank_by_school  year school  city  province score_by_major_scale score_by_school_scale major_rough score_group
+##   <chr>   <chr>     <dbl>         <dbl>          <dbl> <dbl> <chr>   <chr> <chr>                   <dbl>                 <dbl> <chr>       <fct>      
+## 1 C928泉… 油气…        10        260585         256142  2020 泉州职… 泉州… 福建省                   1.19                     0 油气储运工… 低分段     
+## 2 C928泉… 汽车…         5        259516         256142  2020 泉州职… 泉州… 福建省                   1.60                     0 汽车服务工… 低分段     
+## 3 C928泉… 计算…         5        257697         256142  2020 泉州职… 泉州… 福建省                   2.29                     0 计算机类    低分段     
+## 4 C928泉… 机械…         5        256142         256142  2020 泉州职… 泉州… 福建省                   2.88                     0 机械类      低分段     
+## 5 D857山… 房地…        90        250390         243940  2021 山东华… 德州… 山东省                   3.15                     0 房地产开发… 低分段     
+## 6 D857山… 道路…        45        249705         243940  2021 山东华… 德州… 山东省                   3.41                     0 道路桥梁与… 低分段     
+## # ℹ 1 more variable: score_group_school <fct>
 ```
 
 ```r
@@ -513,7 +510,7 @@ ggsaveTheme(p,
 ```
 
 
-### 重点高校专业热度变化 / 高分段学校的低分段专业，同理
+### 重点高校专业热度变化 / 高分段学校的低分段专业，同
 
 
 ```r
@@ -534,16 +531,14 @@ head(dt_school_top_change)
 
 ```
 ## # A tibble: 6 × 12
-##   院校        major province city   countn score_by_major_early score_by_major_later
-##   <chr>       <chr> <chr>    <chr>   <int>                <dbl>                <dbl>
-## 1 D904北京工… 计算… 北京市   北京市      2                 12.5                 75.4
-## 2 D601长春工… 软件… 吉林省   长春市      2                 13.2                 72.6
-## 3 D905南京工… 计算… 江苏省   南京市      2                 25.1                 78.8
-## 4 D991江苏科… 能源… 江苏省   苏州市      2                 22.4                 71.0
-## 5 D897天津理… 数据… 天津市   天津市      2                 19.5                 67.3
-## 6 D897天津理… 软件… 天津市   天津市      2                 20.8                 66.7
-## # ℹ 5 more variables: score_by_major_change <dbl>, major_rough <chr>,
-## #   score_by_school_scale <dbl>, school <chr>, rank <int>
+##   院校      major province city  countn score_by_major_early score_by_major_later score_by_major_change major_rough score_by_school_scale school  rank
+##   <chr>     <chr> <chr>    <chr>  <int>                <dbl>                <dbl>                 <dbl> <chr>                       <dbl> <chr>  <int>
+## 1 D904北京… 计算… 北京市   北京…      2                 12.5                 75.4                  63.0 计算机类                     31.8 北京…    685
+## 2 D601长春… 软件… 吉林省   长春…      2                 13.2                 72.6                  59.4 软件工程                     12.9 长春…    970
+## 3 D905南京… 计算… 江苏省   南京…      2                 25.1                 78.8                  53.7 计算机类                     19.2 南京…    870
+## 4 D991江苏… 能源… 江苏省   苏州…      2                 22.4                 71.0                  48.6 能源与动力…                  32.1 江苏…    682
+## 5 D897天津… 数据… 天津市   天津…      2                 19.5                 67.3                  47.8 数据科学与…                  19.4 天津…    868
+## 6 D897天津… 软件… 天津市   天津…      2                 20.8                 66.7                  45.9 软件工程                     19.4 天津…    868
 ```
 
 ```r
@@ -661,8 +656,7 @@ ggsaveTheme(p_up,
 ```
 
 ```
-## Warning: ggrepel: 2 unlabeled data points (too many overlaps). Consider increasing
-## max.overlaps
+## Warning: ggrepel: 2 unlabeled data points (too many overlaps). Consider increasing max.overlaps
 ```
 
 ```r
@@ -709,8 +703,7 @@ ggsaveTheme(p_down,
 ```
 
 ```
-## Warning: ggrepel: 13 unlabeled data points (too many overlaps). Consider increasing
-## max.overlaps
+## Warning: ggrepel: 13 unlabeled data points (too many overlaps). Consider increasing max.overlaps
 ```
 
 ```r
@@ -748,8 +741,7 @@ ggsaveTheme(p_down,
 ```
 
 ```
-## Warning: ggrepel: 153 unlabeled data points (too many overlaps). Consider
-## increasing max.overlaps
+## Warning: ggrepel: 153 unlabeled data points (too many overlaps). Consider increasing max.overlaps
 ```
 
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
@@ -765,8 +757,7 @@ ggsaveTheme(p_down,
 ```
 
 ```
-## Warning: ggrepel: 63 unlabeled data points (too many overlaps). Consider increasing
-## max.overlaps
+## Warning: ggrepel: 63 unlabeled data points (too many overlaps). Consider increasing max.overlaps
 ```
 
 ```r
@@ -803,8 +794,7 @@ ggsaveTheme(p_down,
 ```
 
 ```
-## Warning: ggrepel: 224 unlabeled data points (too many overlaps). Consider
-## increasing max.overlaps
+## Warning: ggrepel: 224 unlabeled data points (too many overlaps). Consider increasing max.overlaps
 ```
 
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-2.png)
@@ -820,8 +810,7 @@ ggsaveTheme(p_down,
 ```
 
 ```
-## Warning: ggrepel: 22 unlabeled data points (too many overlaps). Consider increasing
-## max.overlaps
+## Warning: ggrepel: 22 unlabeled data points (too many overlaps). Consider increasing max.overlaps
 ```
 
 ```r
